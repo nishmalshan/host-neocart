@@ -1,0 +1,299 @@
+<%-include('./userPartials/header')%>
+
+
+
+
+
+        <style>
+            /* Import Google font - Poppins */
+          @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+          * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: "Poppins", sans-serif;
+          }
+          body {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgb(48, 44, 44)
+          }
+          :where(.container, form, .input-field, header) {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          }
+          .container {
+            max-width: 500px;
+          background: #fff;
+          padding: 30px 65px;
+          border-radius: 12px;
+          row-gap: 20px;
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+          }
+          .container header {
+          height: 65px;
+          width: 65px;
+          background: green;
+          color: #fff;
+          font-size: 2.5rem;
+          border-radius: 50%;
+          }
+          .container h4 {
+          font-size: 1.25rem;
+          color: #000000;
+          font-weight: 500;
+          }
+          form .input-field {
+          flex-direction: row;
+          column-gap: 10px;
+          }
+          .input-field input {
+          height: 45px;
+          width: 42px;
+          border-radius: 6px;
+          outline: none;
+          font-size: 1.125rem;
+          text-align: center;
+          border: 1px solid #ddd;
+          }
+          .input-field input:focus {
+          box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+          }
+          .input-field input::-webkit-inner-spin-button,
+          .input-field input::-webkit-outer-spin-button {
+          display: none;
+          }
+          form button {
+          margin-top: 25px;
+          width: 100%;
+          color: #fff;
+          font-size: 1rem;
+          border: none;
+          padding: 9px 0;
+          cursor: pointer;
+          border-radius: 6px;
+          pointer-events: auto;
+          background: #05298d;
+          transition: all 0.2s ease;
+          }
+          form button.active {
+          background: rgb(21, 1, 65);
+          pointer-events: auto;
+          }
+          form button:hover {
+          background: #05298d
+          }
+          .error-message{
+            color: red;
+            font-size: 14px;
+          
+          }
+          </style>
+
+
+
+
+
+
+
+
+
+<div class="container">
+    <header>
+      <i class="bx bxs-check-shield"></i>
+    </header>
+    <h4>Enter OTP Code</h4>
+    <% if (typeof err !== 'undefined' && err) { %>
+      <p class="error-message"><%= err %></p>
+      <script>
+        setTimeout(function () {
+          document.querySelector('.error-message').style.display = 'none';
+        }, 2000);
+      </script>
+    <% } %>
+
+    
+    <form action="/otpconfirmation" method="post">`
+      <div class="input-field">
+        <input type="number" name="otp1" />
+        <input type="number" name="otp2" disabled />
+        <input type="number" name="otp3" disabled />
+        <input type="number" name="otp4" disabled />
+      </div>
+      <% if (otpErrorMessage) { %>
+        <p class="text-danger text-center my-3" id="otpErrorMessage" style="font-size: 13px; transition: all 0.5s ease-out;"> <%= otpErrorMessage %> </p>
+      <% } %>
+      <input type="text" id="emailverificationCode" name="code" value="" placeholder="enter verificationcode" style="display: none;">
+      <button>Verify OTP</button>
+      <span class="mt-3" id="countdownText" style="color: red;" >request another otp in <span id="countdown">60</span>seconds</span>
+      <a href="/resendOtp" class="" id="resend-otp"  style="margin-top: 15px;"></a>
+
+    </form>
+    
+  </div>
+
+
+
+  <!-- OTP error message script -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      var otpError = document.getElementById('otpErrorMessage');
+      if (otpError) {
+        otpError.style.opacity = "0";
+        setTimeout(() => {
+          otpError.style.display = "none"
+        }, 1000);
+      }
+    }, 5000);
+  })
+</script>
+
+
+
+
+
+<script>
+
+        const inputs = document.querySelectorAll("input"),
+  button = document.querySelector("button");
+
+
+inputs.forEach((input, index1) => {
+  input.addEventListener("keyup", (e) => {
+   
+    const currentInput = input,
+      nextInput = input.nextElementSibling,
+      prevInput = input.previousElementSibling;
+
+
+    if (currentInput.value.length > 1) {
+      currentInput.value = "";
+      return;
+    }
+ 
+    if (nextInput && nextInput.hasAttribute("disabled") && currentInput.value !== "") {
+      nextInput.removeAttribute("disabled");
+      nextInput.focus();
+    }
+
+   
+    if (e.key === "Backspace") {
+     
+      inputs.forEach((input, index2) => {
+     
+        if (index1 <= index2 && prevInput) {
+          input.setAttribute("disabled", true);
+          input.value = "";
+          prevInput.focus();
+        }
+      });
+    }
+  
+    if (!inputs[3].disabled && inputs[3].value !== "") {
+      button.classList.add("active");
+      return;
+    }
+    button.classList.remove("active");
+  });
+});
+
+function updateOTPValue(inputs) {
+    var otpValue = "";
+
+    inputs.forEach(function (input) {
+      otpValue += input.value;
+    });
+
+    if (inputs === otpInputs) {
+      document.getElementById("verificationCode").value = otpValue;
+    } else if (inputs === emailOtpInputs) {
+      document.getElementById("emailverificationCode").value = otpValue;
+    }
+  }
+
+//focus the first input which index is 0 on window load
+window.addEventListener("load", () => inputs[0].focus());
+
+    </script>
+
+
+
+
+<script>
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', function () {
+    const countdownText = document.getElementById('countdownText');
+    const countdown = document.getElementById('countdown');
+    const resend = document.getElementById('resend-otp')
+    let timer =localStorage.getItem('countdown')|| 30; // 2 minutes (2 * 60 seconds)
+      const countdownInterval = setInterval(() => {
+      updateCountdown();
+      localStorage.setItem('countdown', timer);
+  }, 1000);
+
+      function updateCountdown() {
+          countdown.textContent = timer;
+          if (timer <= 0) {
+              clearInterval(countdownInterval);
+              countdownText.style.display = 'none';
+              resend.innerHTML="resend otp "
+                 // Hide the countdown text
+              // Show the "Didn't get the OTP? Resend OTP" link here
+          }
+          timer--;
+      }
+
+      // Initialize the countdown
+      updateCountdown();
+
+      // Start the countdown timer
+
+ 
+      // Add a click event listener to the "Validate" button5
+    
+          // alert('d')
+       
+          // Make an HTTP request to send the OTP to the backend
+        
+      });
+      window.addEventListener('beforeunload', () => {
+      localStorage.removeItem('countdown');
+  });
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+<%-include('./userPartials/footer')%>

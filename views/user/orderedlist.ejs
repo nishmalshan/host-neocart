@@ -1,0 +1,351 @@
+<%- include('./userPartials/header') %>
+
+<%- include('./userPartials/navbar') %>
+
+<link rel="stylesheet" type="text/css" href="/user_css/homePage.css">
+
+<style>
+    .order-status li {
+        font-size: 15px;
+    }
+    .cancel-button.disabled {
+        background-color: grey;
+        pointer-events: none; /* Prevent further interaction */
+}
+
+</style>
+<section class="" style="background-color: #deedf0; width: 100%; height: fit-content;">
+  <div class="container pt-3 pt-md-5">
+      <% if (orderDetails.length < 1) { %>
+      <div class="w-100 vh-100">
+          <img src="/images/no-order.png" width="30%" alt="no order image" class="img-fluid d-block m-auto" />
+      </div>
+      <% } else { %>
+      <h2 class="text-charcoal hidden-sm-down">Order Summary</h2>
+      <div class="row">
+          <% orderDetails.forEach(data => { %>
+          <div class="col-12 mb-3 rounded-3">
+              <div class="list-group shadow-sm bg-body rounded-3">
+                <div class="list-group-item p-3 bg-white">
+                    <div class="row">
+                      <div class="col-10">
+                        <h6 class="text-charcoal mb-0 w-100 d-inline fs-6"><span><strong><%= ++i %>. </strong></span>Order ID: </h6>
+                        <a href="#" class="text-pebble mb-0 w-100 mb-2 mb-md-0 fs-6 text-decoration-none text-dark"><%= data._id %></a>
+                      </div>
+                      <div class="col-2">
+                        <% if (data.status === 'Pending') { %>
+                        <div class="d-flex justify-content-end">
+                          <p class="d-inline-flex justify-content-center align-items-center" style="color: #ffc107; font-weight: 600; padding: 2px 10px; background-color: #ffc10721; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #ffc107; font-size: 10px; margin-right: 5px;"></i> <%= data.status %></p>
+                      </div>
+                       <% } else if (data.status ==='Cancelled') { %>
+                        <div class="d-flex justify-content-end">
+                          <p class="d-inline-flex justify-content-center align-items-center" style="color: #d11326; font-weight: 600; padding: 2px 10px; background-color: #d1132614; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #d11326; font-size: 10px; margin-right: 5px;"></i> <%= data.status %></p>
+                      </div>
+                      <% } else if (data.status === 'Processing') { %>
+                        <div class="d-flex justify-content-end">
+                          <p class="d-inline-flex justify-content-center align-items-center" style="color: #FF4500; font-weight: 600; padding: 2px 10px; background-color: #ff45001a; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #FF4500; font-size: 10px; margin-right: 5px;"></i> <%= data.status %></p>
+                      </div>
+                      <% } else if (data.status === 'Shipped') { %>
+                        <div class="d-flex justify-content-end">
+                          <p class="d-inline-flex justify-content-center align-items-center" style="color: #055C9D; font-weight: 600; padding: 2px 10px; background-color: #055c9d17; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #055C9D; font-size: 10px; margin-right: 5px;"></i> <%= data.status %></p>
+                      </div>
+                      <% } else if (data.status === 'Delivered') { %>
+                        <div class="d-flex justify-content-end">
+                          <p class="d-inline-flex justify-content-center align-items-center" style="color: #00b500; font-weight: 600; padding: 2px 10px; background-color: #00b5001c; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #00b500; font-size: 10px; margin-right: 5px;"></i> <%= data.status %></p>
+                      </div>
+                      <% } else if (data.status === 'Returned') { %>
+                        <div class="d-flex justify-content-end">
+                          <p class="d-inline-flex justify-content-center align-items-center" style="color: #4a4a4a; font-weight: 600; padding: 2px 10px; background-color: #9191911c; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #4a4a4a; font-size: 10px; margin-right: 5px;"></i> <%= data.status %></p>
+                      </div>
+                      <% } %>
+                      </div>
+                  </div>
+                      <div class="row no-gutters mt-4">
+                        <div class="col-1">
+                          <div>
+                            <% if (data.items && data.items[0]) { %>
+                              <a href=""><img class="rounded-3" src="/productImages/<%= data.items[0].image %>" width="100px" alt=""></a>
+                              <% } %>
+                          </div>
+                        </div>
+                          <div class="col-10 pr-0 pr-md-3 ms-4">
+                              <ul class="list-unstyled text-pebble mb-2 small order-status">
+                                  
+                                  <li class="mt-2">
+                                    <% if (data.items && data.items[0]) { %>
+                                      <b class="fs-6">Name: </b> <a href="" class="text-charcoal"><%= data.items[0].name %></a>
+                                      <% } %>
+                                  </li>
+                                  <!-- <li class="mt-2">
+                                      <b class="fs-6">Size: </b> %= data.items[0].size %>
+                                  </li> -->
+                                  <!-- <li class="mt-2">
+                                      <b class="fs-6">Quantity: </b> %= data.items[0].quantity %>
+                                  </li> -->
+                                  <li class="mt-2">
+                                      <b class="fs-6">Total: </b> <%= data.totalPrice %><span>&#8377</span>
+                                  </li>
+                                  <!-- <li class="mt-2">
+                                    <b class="fs-6">Shipped To: </b> <%= data.address[0].address %>
+                                </li> -->
+                                  <!-- <li class="mt-2">
+                                    <b class="fs-6">Ordered Date: </b> <%= data.orderDate.toISOString().substring(0, 10) %>
+                                </li> -->
+                                <li class="mt-2">
+                                    <b class="fs-6">Delivery Date: </b> <%= data.arrivingDate.toISOString().substring(0, 10) %>
+                                </li> 
+                              </ul>
+                          </div>
+                          
+                      </div>
+                  </div>
+                  <div class="list-group-item p-3 bg-light" style="position: relative;">
+                    <div class="row w-100 no-gutters justify-content-end">
+                      <div class="col-2 hidden-sm-down">
+                        <a href="/orderDetails/<%= data.id %>"><button class="btn btn-primary  mb-2 cancel-button">View more</button></a>
+                      </div>
+                      <% if (data.status === 'Cancelled') { %>
+                        <div class="col-2 hidden-sm-down">
+                          <button disabled class="btn btn-secondary mb-2 cancel-button">Cancelled</button>
+                        </div>
+                       <% } else { %>
+                        <% if (data.status === 'Delivered') { %>
+                          <div class="col-2 hidden-sm-down">
+                            <button id="returnButton" class="btn btn-info mb-2 return-button" data-bs-toggle="modal" 
+                                <% if (data.items[0].status === 'Requested for return' || data.items[0].status === 'Accepted') { %>
+                                    disabled
+                                <% } %>
+                                data-bs-target="#returnOrderModal<%= data._id %>">
+                                Return Order
+                            </button>
+                        </div>
+                        
+                          <% } else { %>
+                           
+                            <% if (data.status !== 'Returned') { %>
+                              <div class="col-2 hidden-sm-down">
+                                <button id="cancelButton<%= data._id %>" class="btn btn-danger mb-2 cancel-button" data-bs-toggle="modal" data-bs-target="#cancelOrderModal<%= data._id %>">Cancel Order</button>
+                              </div>
+                            <% } %>
+                        <% } %>
+                      <% } %>
+                    </div>
+                </div>
+              </div>
+          </div>
+
+          <!-- Modal for Cancel Order -->
+<div class="modal fade" id="cancelOrderModal<%= data._id %>" tabindex="-1" aria-labelledby="cancelOrderModalLabel<%= data._id %>" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="cancelOrderModalLabel<%= data._id %>">Cancel Order</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <textarea name="cancelReason" id="cancelReason<%= data._id %>" class="w-100 rounded-2 ps-2 form-control" rows="5" placeholder="Enter your reason..."></textarea>
+        </div>
+        <p id="cancellationReasonErrorMessage" class="mb-3 text-center" style="font-size: 13px; color: red;"></p>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="clearCancellationReason('<%= data._id %>')">Close</button>
+              <button type="button" class="btn btn-success" onclick="submitCancellationReason('<%= data._id %>')">Submit</button>
+            </div>
+      </div>
+  </div>
+</div>
+
+
+<!-- Modal for Return Order -->
+<div class="modal fade" id="returnOrderModal<%= data._id %>" tabindex="-1" aria-labelledby="returnOrderModalLabel<%= data._id %>" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="returnOrderModalLabel<%= data._id %>">Return Order</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <textarea name="returnReason" id="returnReason<%= data._id %>" class="w-100 rounded-2 ps-2 form-control" rows="5" placeholder="Enter your reason..."></textarea>
+        </div>
+        <p id="returnOrderReasonErrorMessage" class="mb-3 text-center" style="font-size: 13px; color: red;"></p>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="clearReturnReason('<%= data._id %>')">Close</button>
+              <button type="button" class="btn btn-success" onclick="submitReturnReason('<%= data._id %>', '<%= data.items[0]._id %>')">Submit</button>
+            </div>
+      </div>
+  </div>
+</div>
+
+
+
+          <% }) %>
+          <% } %>
+      </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+
+  <script>
+
+    
+// Function to submit cancellation reason
+function submitCancellationReason(orderId) {
+  const reason = document.getElementById('cancelReason' + orderId).value.trim();
+  const cancellationReasonErrorMessage = document.getElementById('cancellationReasonErrorMessage');
+  const cancelButton = document.getElementById('cancelButton' + orderId);
+
+  if (reason !== '') {
+    const data = {
+      orderId: orderId,
+      cancellationReason: reason
+    };
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/cancelOrder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(response => {
+          if (response && response.success) {
+            Swal.fire({
+              title: 'Success',
+              text: 'Order cancelled successfully!',
+              icon: 'success'
+            }).then(() => {
+              window.location.reload();
+            });
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Error cancelling the order.',
+              icon: 'error'
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Error cancelling the order.',
+            icon: 'error'
+          });
+        });
+      }
+    });
+  } else {
+    cancellationReasonErrorMessage.textContent = 'Please enter a cancellation reason.';
+    return;
+  }
+}
+
+
+
+
+
+    function clearCancellationReason(orderId) {
+      document.getElementById('cancelReason' + orderId).value = ''; // Clear textarea value
+      document.getElementById('cancellationReasonErrorMessage').textContent = '';
+    }
+
+  </script>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<script>
+
+
+function submitReturnReason(orderId, itemId) {
+    let reason = $('#returnReason' + orderId).val().trim();
+    const returnOrderReasonErrorMessage = $('#returnOrderReasonErrorMessage');
+    
+    if (reason === '') {
+        returnOrderReasonErrorMessage.text('Reason cannot be empty');
+        return;
+    }
+    
+    returnOrderReasonErrorMessage.text('');
+
+    // Send an AJAX request to the server
+    $.ajax({
+        url: '/returnOrder', // Your server-side endpoint for handling returns
+        method: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            orderId: orderId,
+            itemId: itemId,
+            reason: reason
+        }),
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Order return request sent successfully!',
+                    icon: 'success'
+                }).then(() => {
+                    location.reload(); // Refresh the page to reflect changes
+                });
+                $('#returnOrderModal' + orderId).modal('hide');
+            } else {
+                returnOrderReasonErrorMessage.text(response.message);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error:', textStatus, errorThrown);
+            returnOrderReasonErrorMessage.text('An error occurred while submitting the return request. Please try again.');
+        }
+    });
+}
+
+function clearReturnReason(orderId) {
+    $('#returnReason' + orderId).val('');
+    $('#returnOrderReasonErrorMessage').text('');
+}
+
+</script>
+
+
+
+
+
+
+
+
+<%- include('./userPartials/footer') %>

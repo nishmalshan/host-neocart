@@ -1,0 +1,275 @@
+<%-include('./userPartials/header')%>
+
+<%-include('./userPartials/navbar')%>
+
+<link rel="stylesheet" type="text/css" href="/user_css/homePage.css">
+        
+        <link rel="stylesheet" type="text/css" href="/user_css/viewallProducts.css">
+
+    
+
+
+
+        
+
+
+        <section>
+            <div class="d-flex">
+                <div class="sidebar bg-light border-end shadow-sm mb-5 bg-body rounded">
+                    <h3>Filter</h3>
+                    
+                    <form id="filterForm">
+                        <div>
+                            <h6 class="fw-bold">Price</h6>
+                            <div class="ps-3">
+                                <input type="radio" name="priceOrder" id="priceLowToHigh" value="priceLowToHigh" class="border-0">
+                                <label for="priceLowToHigh">Price low to high</label>
+                            </div>
+                            <div class="ps-3 mb-4">
+                                <input type="radio" name="priceOrder" id="priceHighToLow" value="priceHighToLow" class="border-0">
+                                <label for="priceHighToLow">Price high to low</label>
+                            </div>
+                            <h6 class="fw-bold">Category</h6>
+                            <div class="ps-3 mb-4">
+                                <select class="form-select w-auto" id="categorySelect">
+                                    <option value="ALL">All Categories</option>
+                                    <% productCategory.forEach(x => { %>
+                                        <option value="<%= x %>"><%= x %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <h6 class="fw-bold">Brands</h6>
+                            <div class="ps-3">
+                                <select class="form-select w-auto" id="brandSelect">
+                                    <option value="ALL">All Brands</option>
+                                    <% productBrand.forEach(x => { %>
+                                        <option value="<%= x %>"><%= x %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-outline-dark" onclick="resetFilter()">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="applyFilter()">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- <div class="filteredProducts">
+                    <div class="row justify-content-start"  id="productList">
+                        
+                    </div>
+                </div> -->
+                <div class="product-list">
+                    <!-- <div class="header-mark mb-5 d-flex justify-content-start align-items-center">
+                        <span></span>
+                        <h3 class="mb-0 ms-2">All Products</h3>
+                    </div> -->
+                    <div class="row">
+                        <% allProducts.forEach(data => { %>
+                            <div class="all-products best col-lg-3 col-md-3 col-sm-6 px-1 shadow-sm mb-5">
+                                <div class="product border position-relative">
+                                    <a href="/productdetails/<%= data._id %>">
+                                        <div style="overflow: hidden;">
+                                            <img src="/productImages/<%= data.images[0] %>" class="image-fluid" height="250px" width="100%" alt="">
+                                        </div>
+                                        <div class="product-btn">
+                                            <p class=""><%= data.brand %></p>
+                                            <p class="text-truncate"><%= data.name %></p>
+                                            <p class=""><%= data.color %></p>
+                                            <% if (data.discountedPrice) { %>
+                                                <p class="">MRP: <span class="text-success"><%= data.discountedPrice %>&#8377;</span> <span class="text-muted ms-2 text-decoration-line-through"><%= data.price %>&#8377;</span></p>
+                                            <% } else { %>
+                                                <p class="">MRP: <%= data.price %><span>&#8377;</span></p>
+                                            <% } %>
+                                        </div>
+                                    </a>
+                                    <!-- <div class="cart">
+                                        <button class="" data-item-id="" id="addtoCart"><i class="bi bi-cart3 fs-4"></i> ADD TO CART </button>
+                                    </div> -->
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    
+                    
+                </div>
+                
+    
+                
+            </div>
+        </section>
+
+
+
+
+        <div class="pagination-controls">
+            <% if (currentPage > 1) { %>
+              <a href="?page=<%= currentPage - 1 %>" class="btn btn-primary">Previous</a>
+            <% } %>
+          
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <a href="?page=<%= i %>" class="btn <%= currentPage === i ? 'btn-primary' : 'btn-outline-primary' %>"><%= i %></a>
+            <% } %>
+          
+            <% if (currentPage < totalPages) { %>
+              <a href="?page=<%= currentPage + 1 %>" class="btn btn-primary">Next</a>
+            <% } %>
+          </div>
+          
+
+
+<style>
+
+.img{
+    width: 100%;
+    height: 100%;
+}
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.pagination-controls .btn {
+  margin: 0 5px;
+}
+.cart{
+    width: 100%;
+    background-color: darkgrey;
+    margin-top: 20px;
+    transition: all 0.3s;
+    display: none;
+    border-radius: 0px 0px 5px 5px;
+}
+.all-products:hover .cart{
+    display: block;
+    margin-top: -45px;
+    transition: all 0.3s;
+}
+.cart button{
+    padding: 5px 20px;
+    font-weight: 600;
+    width: 100%;
+    border: none;
+    background-color: darkgrey;
+    border-radius: 0px 0px 5px 5px;
+}
+</style>
+
+
+
+
+        <!-- Filter products -->
+        <script>
+            function applyFilter(page = 1) {
+    // Get filter values
+    const category = document.getElementById('categorySelect').value;
+    const brand = document.getElementById('brandSelect').value;
+    const selectedPriceOrder = document.querySelector('input[name="priceOrder"]:checked');
+    let priceOrder = selectedPriceOrder ? selectedPriceOrder.value : null;
+
+    fetch('/filter-products', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ priceOrder, category, brand, page })
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            displayFilteredProducts(response.data, response.currentPage, response.totalPages);
+        }
+    })
+    .catch(error => {
+        console.error('Error applying filter:', error);
+    });
+}
+
+
+function resetFilter() {
+    const selectedPriceOrder = document.querySelector('input[name="priceOrder"]:checked');
+    if (selectedPriceOrder) {
+        selectedPriceOrder.checked = false;
+    }
+    document.getElementById('categorySelect').value = 'ALL';
+    document.getElementById('brandSelect').value = 'ALL';
+    applyFilter(1); // Reset to the first page after filter reset
+}
+
+function searchProducts(page = 1) {
+    const query = document.getElementById('searchInput').value;
+    console.log(query);
+
+    fetch(`/products/search?q=${query}&page=${page}`)
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            console.log('3333333333333333333333333');
+            displayFilteredProducts(response.data, response.currentPage, response.totalPages);
+        }
+    })
+    .catch(error => {
+        console.error('Error searching products:', error);
+    });
+}
+
+
+
+
+function displayFilteredProducts(data, currentPage, totalPages) {
+    // Display products (same as before)
+    const productContainer = document.querySelector('.product-list .row');
+    productContainer.innerHTML = '';
+
+    if (data.length === 0) {
+        productContainer.innerHTML = '<div class="text-center"><h2>No products found</h2></div>';
+        return;
+    }
+
+    data.forEach(product => {
+        const productDiv = document.createElement('div');
+        productDiv.classList.add('all-products', 'best', 'col-lg-3', 'col-md-3', 'col-sm-6', 'px-1', 'shadow-sm', 'mb-5');
+
+        productDiv.innerHTML = `
+            <div class="product border position-relative">
+                <a href="/productdetails/${product._id}">
+                    <img src="/productImages/${product.images[0]}" class="image-fluid" height="250px" width="100%" alt="">
+                    <div class="product-btn">
+                        <p>${product.brand}</p>
+                        <p class="text-truncate">${product.name}</p>
+                        <p>${product.color}</p>
+                        ${product.discountedPrice ? 
+                            `<p>MRP: <span class="text-success">${product.discountedPrice}&#8377;</span> <span class="text-muted ms-2 text-decoration-line-through">${product.price}&#8377;</span></p>` :
+                            `<p>MRP: ${product.price}&#8377;</p>`
+                        }
+                    </div>
+                </a>
+            </div>
+        `;
+        productContainer.appendChild(productDiv);
+    });
+
+    // Update pagination controls
+    const paginationControls = document.querySelector('.pagination-controls');
+    paginationControls.innerHTML = '';
+
+    if (currentPage > 1) {
+        paginationControls.innerHTML += `<a href="javascript:void(0)" class="btn btn-primary" onclick="applyFilter(${currentPage - 1})">Previous</a>`;
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+        paginationControls.innerHTML += `<a href="javascript:void(0)" class="btn ${currentPage === i ? 'btn-primary' : 'btn-outline-primary'}" onclick="applyFilter(${i})">${i}</a>`;
+    }
+
+    if (currentPage < totalPages) {
+        paginationControls.innerHTML += `<a href="javascript:void(0)" class="btn btn-primary" onclick="applyFilter(${currentPage + 1})">Next</a>`;
+    }
+}
+
+
+        </script>
+        
+
+
+
+        <%-include('./userPartials/footer')%>

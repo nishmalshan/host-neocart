@@ -1,0 +1,378 @@
+<%- include('./userPartials/header') %>
+
+<%- include('./userPartials/navbar') %>
+
+<link rel="stylesheet" type="text/css" href="/user_css/homePage.css">
+
+
+
+
+
+        <style>
+            .main{
+                width: 100%;
+                height: fit-content;
+                padding: 20px 0px;
+                background: rgb(11,39,43);
+                background: linear-gradient(90deg, rgba(11,39,43,1) 0%, rgba(15,105,120,1) 79%, rgba(1,100,114,1) 100%);
+            }
+            .details h5{
+                margin-bottom: 0;
+                font-weight: 600;
+            }
+            .details p{
+                margin-bottom: 2px;
+                font-size: 14px;
+                color: #707070;
+                font-weight: 500;
+            }
+            .details span{
+                font-weight: 600;
+                color: #2b2b2b;
+            }
+            .icon i{
+                padding: 9px 10px;
+                /* background-color: #e3e3e3; */
+                border-radius: 50px;
+            }
+            .status p{
+                margin-bottom: 0;
+                font-size: 14px;
+            }
+            .table td, th{
+                vertical-align: middle;
+                text-align: center;
+            }
+            .action button {
+                padding: 0.5em;
+                width: 60%;
+                /* height: 100%; */
+                font-weight: 600;
+                font-size: 1em;
+                color: #ffffff;
+                border: none;
+                border-radius: 0.3em;
+                transition: background-color 0.2s ease-in-out;
+                background-color: #2962ff;
+                }
+                .action button:hover {
+                background: #2979ff;
+                }
+        </style>
+    
+
+
+
+
+
+<main class="main">
+    <div class="container">
+        <h2 class="pt-3 text-white fw-bold">Order Details</h2>
+    <div class="container bg-white rounded-3 pb-4">
+        <div class="row pt-4 justify-content-center align-items-center">
+            <div class="orderid col-7 border-end">
+                <h6 class="fw-bold">Order ID: <span><%= orderDetails._id %></span></h6>
+            </div>
+            <div class="col-5 row">
+                <div class="status col-7 border-end">
+                    <% if (orderDetails.status === 'Pending') { %>
+                        <p>Order status: <span class="d-inline-flex justify-content-center align-items-center shadow-sm" style="color: #ffc107; font-weight: 600; padding: 2px 10px; background-color: #ffc10721; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #ffc107; font-size: 10px; margin-right: 5px;"></i> <%= orderDetails.status %></span></p>
+                        <% } else if (orderDetails.status === 'Cancelled') { %>
+                        <p>Order status: <span class="d-inline-flex justify-content-center align-items-center shadow-sm" style="color: #d11326; font-weight: 600; padding: 2px 10px; background-color: #d1132614; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #d11326; font-size: 10px; margin-right: 5px;"></i> <%= orderDetails.status %></span></p>
+                        <% } else if (orderDetails.status === 'Processing') { %>
+                            <p>Order status: <span class="d-inline-flex justify-content-center align-items-center shadow-sm" style="color: #FF4500; font-weight: 600; padding: 2px 10px; background-color: #ff45001a; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #FF4500; font-size: 10px; margin-right: 5px;"></i> <%= orderDetails.status %></span></p>
+                         <% } else if (orderDetails.status === 'Shipped') { %>
+                            <p>Order status: <span class="d-inline-flex justify-content-center align-items-center shadow-sm" style="color: #055C9D; font-weight: 600; padding: 2px 10px; background-color: #055c9d17; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #055C9D; font-size: 10px; margin-right: 5px;"></i> <%= orderDetails.status %></span></p>
+                            <% } else if (orderDetails.status === 'Delivered') { %>
+                                <p>Order status: <span class="d-inline-flex justify-content-center align-items-center shadow-sm" style="color: #00b500; font-weight: 600; padding: 2px 10px; background-color: #00b5001c; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #00b500; font-size: 10px; margin-right: 5px;"></i> <%= orderDetails.status %></span></p>
+                                <% } else if (orderDetails.status === 'Returned') { %>
+                                    <p>Order status: <span class="d-inline-flex justify-content-center align-items-center shadow-sm" style="color: #4a4a4a; font-weight: 600; padding: 2px 10px; background-color: #9191911c; border-radius: 8px;"><i class="fa-solid fa-circle-dot" style="color: #4a4a4a; font-size: 10px; margin-right: 5px;"></i> <%= orderDetails.status %></span></p>
+                        <% } %>
+                </div>
+                <div class="invoice col-5 pe-0 d-flex">
+                    <p style="font-size: 14px;">Download Invoice: </p>
+                    <button type="button" class="btn bg-secondary-subtle px-1 py-0 shadow-sm" title="Invoice Download" onclick="generateAndDownloadInvoice('<%= orderDetails._id %>')">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row p-4">
+            <div class="col-6 p-4 my-3">
+                <div class="row d-flex justify-content-center">
+                    <div class="icon col-1">
+                        <i class="fa-regular fa-user shadow-sm" style="background-color: #ef000024;"></i>
+                    </div>
+                    <div class="details col-10">
+                        <h5>Customer</h5>
+                        <p class="mt-2">Name: <span><%= orderDetails.address[0].name %></span></p>
+                        <p>Email: <span><%= email %></span></p>
+                        <p>Phone: <span><%= orderDetails.address[0].phone %></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 p-4 my-3">
+                <div class="row d-flex justify-content-center">
+                    <div class="icon col-1">
+                        <i class="bi bi-cart3 shadow-sm" style="background-color: #00ff0029;"></i>
+                    </div>
+                    <div class="details col-10">
+                        <h5>Order info</h5>
+                        <p class="mt-2">Total items: <span><%= orderDetails.items.length %></span></p>
+                        <p>Toatal: <span><%= orderDetails.totalPrice %><span> &#8377</span></span></p>
+                        <p>Order date: <span><%= orderDetails.orderDate.toISOString().substring(0, 10) %></span></p>
+                        <p>Delivery date: <span><%= orderDetails.arrivingDate.toISOString().substring(0, 10) %></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 p-4 my-3">
+                <div class="row d-flex justify-content-center">
+                    <div class="icon col-1">
+                        <i class="bi bi-credit-card-2-back shadow-sm" style="background-color: #eded004a;"></i>
+                    </div>
+                    <div class="details col-10">
+                        <h5>Payment</h5>
+                        <p class="mt-2">Payment type: <span><%= orderDetails.paymentMethod %></span></p>
+                        <% if (orderDetails.paymentStatus === "Paid") { %>
+                            <p>Payment status: <span class="text-success"><%= orderDetails.paymentStatus %></span></p>
+                                <% } else if (orderDetails.paymentMethod === "Online" && orderDetails.paymentStatus !== "Paid") { %>
+                                        <p>Payment status:  <span class="text-danger">Payment failed</span></p>
+                            <% } %>
+                        <p>Name: <span><%= orderDetails.address[0].name %></span></p>
+                        <p>Phone: <span><%= orderDetails.address[0].phone %></span></p>
+                        <% if (orderDetails.paymentMethod === "Online" && orderDetails.paymentStatus !== "Paid") { %>
+                         <div class="action">
+                            <button id="payment-btn" value="Online" onclick="sendDataToBackend('<%= orderDetails._id %>', this.value)">Pay Now</button>
+                         </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 p-4 my-3">
+                <div class="row d-flex justify-content-center">
+                    <div class="icon col-1">
+                        <i class="bi bi-geo-alt shadow-sm" style="background-color: #0000ff1f;"></i>
+                    </div>
+                    <div class="details col-10">
+                        <h5>Delivery Address</h5>
+                        <p class="mt-2">Name: <span><%= orderDetails.address[0].name %></span></p>
+                        <p>Address: <span><%= orderDetails.address[0].address %></span></p>
+                        <p>Phone: <span><%= orderDetails.address[0].phone %></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product-details px-4 bg-white">
+            <h6 class="fw-bold text-black">Products</h6>
+            <table class="table table-hover shadow">
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Size</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orderDetails.items.forEach((data, index) => { %>
+                        <tr class="align-middle bg-success">
+                            <td><%= index + 1 %></th>
+                            <td><img src="/productImages/<%= data.image %>" class="img-fluid rounded-3" width="50px" alt=""></td>
+                            <td><%= data.name %></td>
+                            <td><%= data.size %></td>
+                            <td><%= data.quantity %></td>
+                            <td><%= orderDetails.items[0].price %><span> &#8377</span></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+    </div>
+
+</main>
+
+
+
+
+
+
+<script>
+    async function generateAndDownloadInvoice(orderId) {
+      try {
+        const response = await fetch('/download-invoice', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ orderId })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `invoice_${orderId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+      }
+    }
+  </script>
+
+
+
+
+
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+async function sendDataToBackend(orderId, paymentMethodValue) {
+    console.log('111111111111111111111111111111');
+    console.log(orderId);
+    console.log(paymentMethodValue);
+    // const responseMessage = document.getElementById('errorMessage');
+    // responseMessage.textContent = " ";
+
+    const data = {
+        orderId: orderId,
+        paymentMethod: paymentMethodValue // This will be "Online" or whatever the button value is
+    };
+    console.log(data,'data');
+
+    try {
+        const response = await fetch('/failed-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            console.log('2222222222222222222222222222222222222222');
+            initiateRazorpayPayment(result);
+        } else {
+            responseMessage.textContent = result.message || 'An error occurred. Please try again.';
+            responseMessage.style.display = 'block';
+
+            setTimeout(() => {
+                responseMessage.style.display = 'none';
+            }, 3000);
+        }
+    } catch (error) {
+        console.log(error, 'Error sending data to backend');
+    }
+}
+
+
+
+    function initiateRazorpayPayment(orderDetails) {
+console.log(orderDetails,'33333333333333333333333333333333333333');
+const options = {
+    key: orderDetails.key_id,
+    amount: orderDetails.amount,
+    currency: 'INR',
+    orderId: orderDetails.orderId,
+    name: orderDetails.name,
+    description: 'Order Payment',
+    // image: '%= logoUrl %>',
+    order_id: orderDetails.order_id,
+    handler: function (response) {
+        console.log(response,'response');
+        console.log('444444444444444444444444444444444');
+        verifyPayment(response, orderDetails.orderId);
+    },
+    prefill: {
+        name: orderDetails.name,
+        email: orderDetails.email,
+        contact: orderDetails.contact
+    },
+    theme: {
+        color: '#F37254'
+    }
+};
+console.log(options,'options');
+const rzp1 = new Razorpay(options);
+rzp1.open();
+}
+
+
+
+
+async function verifyPayment(response, orderId) {
+    console.log(orderId, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    console.log(response, 'response');
+
+    const paymentData = {
+        orderId: orderId,
+        order_id: response.razorpay_order_id,
+        payment_id: response.razorpay_payment_id,
+        signature: response.razorpay_signature
+    };
+
+    console.log(paymentData, 'paymentData');
+
+    fetch('/verify-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(paymentData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Payment Successful!',
+                text: 'Your payment has been successfully verified.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Reload the page after the alert is closed
+                location.reload();
+            });
+        } else {
+            console.error('Payment verification failed');
+            Swal.fire({
+                title: 'Payment Failed!',
+                text: 'Payment verification failed. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error verifying payment', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'There was an error verifying your payment. Please try again later.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
+}
+
+
+
+</script>
+
+
+
+
+<%- include('./userPartials/footer') %>

@@ -1,0 +1,75 @@
+<%-include('../adminPartials/header')%>
+
+
+  <link rel="stylesheet" href="/admin_css/admindashboard.css">
+
+
+
+  <main class=" d-flex">  <!-- this main tag closer tag is in the footer partial-->
+
+
+
+    <div class="sidebar" id="container">
+      <div class="brand">
+        <!-- <div class="logo">
+                  <i class="bi bi-person-fill"></i>
+                </div> -->
+        <h3>Admin Panel</h3>
+        <a href="#" id="toggle"><i class="bi bi-list"></i></a>
+
+      </div>
+      <div class="search">
+        <i class="bi bi-search"></i>
+        <input type="search" name="search" id="search" placeholder="Search">
+      </div>
+      <div class="navbar">
+        <ul>
+          <li><a href="/admin/dashboard"><i class="bi bi-house-door-fill"></i><span>Dashboard</span></a></li>
+          <li><a href="/admin/userlist"><i class="bi bi-people-fill"></i><span>User Management</span></a></li>
+          <li><a href="/admin/product-manage"><i class="bi bi-list-ul"></i><span>Product Management</span></a></li>
+          <li><a href="/admin/category"><i class="bi bi-stack"></i><span>Category Management</span></a></li>
+          <li><a href="/admin/order-manage"><i class="bi bi-credit-card-2-back-fill"></i><span>Order Management</span></a></li>
+          <li><a href="/admin/return-manage"><i class="bi bi-arrow-return-left"></i><span>Return Management</span></a></li>
+          <li><a href="/admin/offer-product"><i class="bi bi-gift-fill"></i><span>Product offers</span></a></li>
+          <li><a href="/admin/category-offer"><i class="bi bi-gift-fill"></i><span>Category offers</span></a></li>
+          <li><a href="/admin/managecoupon"><i class="bi bi-tags-fill"></i><span>Coupons</span></a></li>
+          <!-- <li><a href="#"><i class="bi bi-gear-fill"></i><span>Settings</span></a></li> -->
+        </ul>
+      </div>
+      <div class="user">
+        <form action="/admin/adminlogout" method="post" class=" w-100">
+          <div class="d-flex justify-content-evenly">
+            <button class="btn btn-primary text-dark" style="background: none; border: none; width: 100%;" type="submit">Logout <i class="bi bi-box-arrow-in-right"></i></button>
+          <!-- <a href="#"></a> -->
+          </div>
+        </form>
+        </div>
+    </div>
+
+
+   
+
+
+
+
+  <!-- Dashboard clicking function start -->
+
+  <script>
+    var toggle = document.getElementById("toggle");
+    var container = document.getElementById("container");
+
+    toggle.onclick = function () {
+      container.classList.toggle("active")
+    }
+  </script>
+
+  <!-- Dashboard clicking function end -->
+
+
+
+
+
+
+
+
+

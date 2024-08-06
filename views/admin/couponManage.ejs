@@ -1,0 +1,617 @@
+
+<%-include('./adminPartials/sidebar')%> 
+
+
+
+
+  
+  <!-- Modal for adding coupon -->
+
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Coupon</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label for="coupon-name" class="col-form-label">Coupon Name:</label>
+                        <input type="text" class="form-control" id="couponName" placeholder="Name">
+                        <!-- <p id="couponWarning" style="color: red; font-size: 13px;"></p> -->
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="coupon-code" class="col-form-label">Coupon Code:</label>
+                        <input type="text" class="form-control" id="couponCode" placeholder="Coupon code">
+                        <!-- <p id="couponWarning" style="color: red; font-size: 13px;"></p> -->
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="min-purchase-amount" class="col-form-label">Minimum Purchase Amount:</label>
+                        <input type="number" class="form-control" id="minPurchaseAmount" placeholder="Minimum amount">
+                        <!-- <p id="couponWarning" style="color: red; font-size: 13px;"></p> -->
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="max-purchase-amount" class="col-form-label">Maximum Purchase Amount:</label>
+                        <input type="number" class="form-control" id="maxPurchaseAmount" placeholder="Maximum amount">
+                        <!-- <p id="couponWarning" style="color: red; font-size: 13px;"></p> -->
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="discount-amount" class="col-form-label">Discount In %:</label>
+                        <input type="number" min="0" max="99" class="form-control" id="discountAmount" placeholder="Discount amount">
+                        <!-- <p id="couponWarning" style="color: red; font-size: 13px;"></p> -->
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="start-date" class="col-form-label">Start Date:</label>
+                        <input type="date" class="form-control" id="startDate" placeholder="">
+                        <!-- <p id="couponWarning" style="color: red; font-size: 13px;"></p> -->
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="end-date" class="col-form-label">End Date:</label>
+                        <input type="date" class="form-control" id="endDate" placeholder="">
+                        <!-- <p id="couponWarning" style="color: red; font-size: 13px;"></p> -->
+                    </div>
+                </div>
+                <p id="couponWarning" style="color: red; font-size: 13px; text-align: center;"></p>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                <button type="button" class="btn btn-success w-100" id="createCouponBtn">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5" style="width: 78%;">
+    <div class="position-relative">
+        <% if (!couponData || couponData.length < 1) { %>
+            <div>
+                <div class="no-coupons-image text-center">
+                    <img src="/images/no-coupons.png" width="20%" alt="no coupon image" class="img-fluid d-block m-auto">
+                    <h4>No Coupons Available</h4>
+                </div>
+                <div class="add-btn text-center mt-5">
+                    <button class="btn btn-success rounded-pill" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add New <i class="bi bi-plus-lg"></i></button>
+                </div>
+            </div>
+        <% } else { %>
+            <h3 class="mb-3 fw-bold">Coupon Management</h3>
+            <div>
+                <div class="table-responsive rounded-3">
+                    <p id="couponWarning" style="color: red; font-size: 15px; text-align: center;"></p>
+                    <div class="add-btn mb-3">
+                        <button class="btn btn-success rounded-pill" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add New <i class="bi bi-plus-lg"></i></button>
+                    </div>
+                    <table id="usersTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr class="bg-dark text-white">
+                                <th>No</th>
+                                <th>Coupon Name</th>
+                                <th>Coupon Code</th>
+                                <th>Min Purchase Amount</th>
+                                <th>Max Purchase Amount</th>
+                                <th>Discount in %</th>
+                                <th>Start Date</th>
+                                <th>Expiry Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% couponData.forEach((data, index) => { %>
+                                <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td><input type="text" class="couponName-input" value="<%= data.couponName %>" placeholder="" data-index="<%= index %>"></td>
+                                    <td><input type="text" class="couponCode-input" value="<%= data.couponCode %>" placeholder="" data-index="<%= index %>"></td>
+                                    <td><input type="number" class="minPurchaseAmount-input" value="<%= data.minPurchaseAmount %>" placeholder="0" data-index="<%= index %>"></td>
+                                    <td><input type="number" class="maxPurchaseAmount-input" value="<%= data.maxPurchaseAmount %>" placeholder="0" data-index="<%= index %>"></td>
+                                    <td><input type="number" class="discountAmount-input" value="<%= data.discountAmount %>" min="0" max="99" placeholder="" data-index="<%= index %>"></td>
+                                    <td><input type="date" class="startDate-input" value="<%= data.startDate ? new Date(data.startDate).toISOString().substring(0, 10) : '' %>" data-index="<%= index %>"></td>
+                                    <td><input type="date" class="expiryDate-input" value="<%= data.expiryDate ? new Date(data.expiryDate).toISOString().substring(0, 10) : '' %>" data-index="<%= index %>"></td>
+                                    <td>
+                                        <% if (data.status === true) { %>
+                                            <button type="button" class="btn btn-success text-center status-btn" data-index="<%= index %>" data-coupon-id="<%= data._id %>" data-status="true">Active</button>
+                                        <% } else { %>
+                                            <button type="button" class="btn btn-danger text-center status-btn" data-index="<%= index %>" data-coupon-id="<%= data._id %>" data-status="false">Inactive</button>
+                                        <% } %>
+                                    </td>
+                                    
+                                    <td>
+                                        <div class="text-center d-flex justify-content-evenly align-items-center"  style="width: 7rem;">
+                                            <button type="button" class="btn btn-primary text-center edit-btn" data-index="<%= index %>" data-coupon-id="<%= data._id %>">Edit</button>
+                                        <a href="" class="btn delete-btn" data-index="<%= index %>" data-coupon-id="<%= data._id %>"><i class="bi bi-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<style>
+    h3, button, table{
+        font-family: "Inter", sans-serif;
+    }
+    thead tr{
+        height: 50px;
+    }
+    td{
+        vertical-align: middle !important;
+    }
+    .modal-body label{
+        font-size: 13px;
+        padding: 0;
+    }
+    .bi-trash{
+        font-size: 22px;
+        color: #000;
+    }
+    .success-message {
+        display: none;
+        position: fixed;
+        top: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        z-index: 1055; /* Ensure it appears above the modal */
+    }
+
+    .slide-down {
+        animation: slideDown 1s forwards;
+    }
+
+    @keyframes slideDown {
+        0% {
+            top: -50px;
+        }
+        100% {
+            top: 20px;
+        }
+    }
+
+</style>
+
+
+
+
+
+<!-- data table link -->
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    jQuery.noConflict();
+    jQuery(document).ready(function($) {
+        $('#usersTable').DataTable();
+    });
+</script>
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- script for create new coupon -->
+<script>
+    $(document).ready(function() {
+        $('#createCouponBtn').on('click', function() {
+            var couponName = $('#couponName').val().trim();
+            var couponCode = $('#couponCode').val().trim();
+            var minPurchaseAmount = $('#minPurchaseAmount').val().trim();
+            var maxPurchaseAmount = $('#maxPurchaseAmount').val().trim();
+            var discountAmount = $('#discountAmount').val().trim();
+            var startDate = $('#startDate').val().trim();
+            var endDate = $('#endDate').val().trim();
+            var warningMessage = '';
+            console.log('couponName',couponName);
+            console.log('couponCode',couponCode);
+            console.log('minPurchaseAmount',minPurchaseAmount);
+            console.log('maxPurchaseAmount',maxPurchaseAmount);
+            console.log('discountAmount',discountAmount);
+            console.log('startDate',startDate);
+            console.log('endDate',endDate);
+            
+
+            if (!couponName) {
+                warningMessage = 'Coupon Name is required.<br>';
+            } else if (!couponCode) {
+                warningMessage += 'Coupon Code is required.<br>';
+            } else if (!minPurchaseAmount) {
+                warningMessage += 'Minimum Purchase Amount is required.<br>';
+            } else if (!maxPurchaseAmount) {
+                warningMessage += 'Maximum Purchase Amount is required.<br>';
+            } else if (!discountAmount) {
+                warningMessage += 'Discount Amount is required.<br>';
+            } else if (!startDate) {
+                warningMessage += 'Start Date is required.<br>';
+            } else if (!endDate) {
+                warningMessage += 'End Date is required.<br>';
+            }
+             if (warningMessage) {
+                $('#couponWarning').html(warningMessage);
+                return;
+            }
+
+            var couponData = {
+                couponName: couponName,
+                couponCode: couponCode,
+                minPurchaseAmount: minPurchaseAmount,
+                maxPurchaseAmount: maxPurchaseAmount,
+                discountAmount: discountAmount,
+                startDate: startDate,
+                endDate: endDate
+            };
+            
+
+            $.ajax({
+                url: '/admin/create-coupon', // replace with your backend endpoint
+                method: 'POST',
+                data: couponData,
+                success: function(response) {
+                    if (response.success) {
+                        // Clear the modal fields
+                        $('#couponName').val('');
+                        $('#couponCode').val('');
+                        $('#minPurchaseAmount').val('');
+                        $('#maxPurchaseAmount').val('');
+                        $('#discountAmount').val('');
+                        $('#startDate').val('');
+                        $('#endDate').val('');
+
+                        // Hide the modal
+                        $('#staticBackdrop').modal('hide');
+
+                        var message = $('<div>')
+                            .attr('id', 'wishlistSuccessMessage')
+                            .html('<i class="fa-solid fa-circle-check" style="color: #0cb800; margin-right: 10px"></i> ' + response.message)  // Use the response message with icon
+                            .css({
+                                'width': 'max-content',
+                                'position': 'fixed',
+                                'top': '50px', // Start above the viewport
+                                'right': '50%',
+                                'left': '50%',
+                                'transform': 'translate(-50%, -50%)',
+                                'background': '#212121',
+                                'color': 'white',
+                                'padding': '10px',
+                                'border-radius': '5px',
+                                'border': '#212121',
+                                'box-shadow': '#1px 0 2px 0 rgba(0,0,0,.2)',
+                                'z-index': '1000',
+                                'display': 'none' // Initially hidden
+                            });
+
+                        // Append the message to the body
+                        $('body').append(message);
+
+                        // Animate the message
+                        message.slideDown(300).animate({ top: '120px' }, { duration: 500 });
+
+                        // Remove the message after 3 seconds
+                        setTimeout(function () {
+                            message.fadeOut(300, function () {
+                                message.remove();
+                                // Optionally, you can refresh the page or update the coupons list dynamically
+                                location.reload();
+                            });
+                        }, 2000);
+
+                    } else {
+                        var message = $('<div>')
+                            .attr('id', 'wishlistSuccessMessage')
+                            .html(response.message)  // Use the response message with icon
+                            .css({
+                                'width': 'max-content',
+                                'position': 'fixed',
+                                'top': '50px', // Start above the viewport
+                                'right': '50%',
+                                'left': '50%',
+                                'transform': 'translate(-50%, -50%)',
+                                'background': '#D10000',
+                                'color': 'white',
+                                'padding': '10px',
+                                'border-radius': '5px',
+                                'border': '#D10000',
+                                'box-shadow': '#1px 0 2px 0 rgba(0,0,0,.2)',
+                                'z-index': '1000',
+                                'display': 'none' // Initially hidden
+                            });
+
+                        // Append the message to the body
+                        $('body').append(message);
+
+                        // Animate the message
+                        message.slideDown(300).animate({ top: '120px' }, { duration: 500 });
+
+                        // Remove the message after 3 seconds
+                        setTimeout(function () {
+                            message.fadeOut(300, function () {
+                                message.remove();
+                                // Optionally, you can refresh the page or update the coupons list dynamically
+                                location.reload();
+                            });
+                        }, 2000);
+                    }
+                },
+                error: function() {
+                    $('#couponWarning').html('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+<!-- script for edit existing coupon -->
+
+<script>
+    $(document).ready(function() {
+        $('.edit-btn').on('click', function() {
+            var index = $(this).data('index');
+            var couponId = $(this).data('coupon-id');
+
+            // Fetch input values safely
+            var couponName = $('input.couponName-input[data-index="' + index + '"]').val();
+            var couponCode = $('input.couponCode-input[data-index="' + index + '"]').val();
+            var minPurchaseAmount = $('input.minPurchaseAmount-input[data-index="' + index + '"]').val();
+            var maxPurchaseAmount = $('input.maxPurchaseAmount-input[data-index="' + index + '"]').val();
+            var discountAmount = $('input.discountAmount-input[data-index="' + index + '"]').val();
+            var startDate = $('input.startDate-input[data-index="' + index + '"]').val();
+            var expiryDate = $('input.expiryDate-input[data-index="' + index + '"]').val();
+
+            // Check if any input is undefined and log an error if so
+            if (couponName === undefined || couponCode === undefined || minPurchaseAmount === undefined || maxPurchaseAmount === undefined || discountAmount === undefined || startDate === undefined || expiryDate === undefined) {
+                console.error('One or more inputs are undefined.');
+                return;
+            }
+
+            // Trim values
+            couponName = couponName.trim();
+            couponCode = couponCode.trim();
+            minPurchaseAmount = minPurchaseAmount.trim();
+            maxPurchaseAmount = maxPurchaseAmount.trim();
+            discountAmount = discountAmount.trim();
+            startDate = startDate.trim();
+            expiryDate = expiryDate.trim();
+
+            var couponData = {
+                couponName: couponName,
+                couponId: couponId,
+                couponCode: couponCode,
+                minPurchaseAmount: minPurchaseAmount,
+                maxPurchaseAmount: maxPurchaseAmount,
+                discountAmount: discountAmount,
+                startDate: startDate,
+                expiryDate: expiryDate
+            };
+
+            $.ajax({
+                url: '/admin/update-coupon',
+                method: 'PUT',
+                data: couponData,
+                success: function(response) {
+                    if (response.success) {
+                        // Display success message
+                        var message = $('<div>')
+                            .attr('id', 'updateSuccessMessage')
+                            .html('<i class="fa-solid fa-circle-check" style="color: #0cb800; margin-right: 10px"></i> ' + response.message)
+                            .css({
+                                'width': 'max-content',
+                                'position': 'fixed',
+                                'top': '50px',
+                                'right': '50%',
+                                'left': '50%',
+                                'transform': 'translate(-50%, -50%)',
+                                'background': '#212121',
+                                'color': 'white',
+                                'padding': '10px',
+                                'border-radius': '5px',
+                                'border': '#212121',
+                                'box-shadow': '#1px 0 2px 0 rgba(0,0,0,.2)',
+                                'z-index': '1000',
+                                'display': 'none'
+                            });
+
+                        $('body').append(message);
+
+                        message.slideDown(300).animate({ top: '120px' }, { duration: 500 });
+
+                        setTimeout(function () {
+                            message.fadeOut(300, function () {
+                                message.remove();
+                                location.reload();
+                            });
+                        }, 2000);
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+<!-- script for delete coupon -->
+
+<script>
+    $(document).ready(function() {
+        // Event listener for delete button
+        $('.delete-btn').on('click', function(event) {
+            event.preventDefault(); // Prevent the default link behavior
+
+            var couponId = $(this).data('coupon-id');
+
+            if (confirm('Are you sure you want to delete this coupon?')) {
+                $.ajax({
+                    url: '/admin/delete-coupon/' + couponId, // Replace with your backend endpoint
+                    method: 'DELETE',
+                    success: function(response) {
+                        if (response.success) {
+                            // Display success message
+                            var message = $('<div>')
+                                .attr('id', 'deleteSuccessMessage')
+                                .html('<i class="fa-solid fa-circle-check" style="color: #0cb800; margin-right: 10px"></i> ' + response.message)
+                                .css({
+                                    'width': 'max-content',
+                                    'position': 'fixed',
+                                    'top': '50px',
+                                    'right': '50%',
+                                    'left': '50%',
+                                    'transform': 'translate(-50%, -50%)',
+                                    'background': '#212121',
+                                    'color': 'white',
+                                    'padding': '10px',
+                                    'border-radius': '5px',
+                                    'border': '#212121',
+                                    'box-shadow': '#1px 0 2px 0 rgba(0,0,0,.2)',
+                                    'z-index': '1000',
+                                    'display': 'none'
+                                });
+
+                            $('body').append(message);
+
+                            message.slideDown(300).animate({ top: '120px' }, { duration: 500 });
+
+                            setTimeout(function () {
+                                message.fadeOut(300, function () {
+                                    message.remove();
+                                    location.reload();
+                                });
+                            }, 2000);
+
+                            // Remove the coupon row from the table
+                            $('tr:has(.delete-btn[data-coupon-id="' + couponId + '"])').remove();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
+
+<script>
+    $(document).ready(function() {
+        // Event listener for status buttons
+        $('.status-btn').on('click', function() {
+            var couponId = $(this).data('coupon-id');
+            var currentStatus = $(this).data('status');
+            var newStatus = !currentStatus; // Toggle the status
+            console.log(currentStatus);
+            console.log(newStatus);
+
+            // AJAX request to update the status
+            $.ajax({
+                url: '/admin/update-coupon-status', // Replace with your actual backend endpoint
+                method: 'PUT',
+                data: {
+                    couponId: couponId,
+                    status: newStatus
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update the button text and class based on the new status
+                        var button = $('button.status-btn[data-coupon-id="' + couponId + '"]');
+                        if (newStatus) {
+                            button.removeClass('btn-danger').addClass('btn-success').text('Active').data('status', true);
+                        } else {
+                            button.removeClass('btn-success').addClass('btn-danger').text('Inactive').data('status', false);
+                        }
+
+                        // Optionally, display a success message
+                        var message = $('<div>')
+                            .attr('id', 'statusUpdateSuccessMessage')
+                            .html('<i class="fa-solid fa-circle-check" style="color: #0cb800; margin-right: 10px"></i> ' + response.message)
+                            .css({
+                                'width': 'max-content',
+                                'position': 'fixed',
+                                'top': '50px',
+                                'right': '50%',
+                                'left': '50%',
+                                'transform': 'translate(-50%, -50%)',
+                                'background': '#212121',
+                                'color': 'white',
+                                'padding': '10px',
+                                'border-radius': '5px',
+                                'border': '#212121',
+                                'box-shadow': '#1px 0 2px 0 rgba(0,0,0,.2)',
+                                'z-index': '1000',
+                                'display': 'none'
+                            });
+
+                        $('body').append(message);
+
+                        message.slideDown(300).animate({ top: '120px' }, { duration: 500 });
+
+                        setTimeout(function () {
+                            message.fadeOut(300, function () {
+                                message.remove();
+                            });
+                        }, 2000);
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%-include('./adminPartials/footer')%>

@@ -1,0 +1,220 @@
+
+
+<%-include('./userPartials/header')%>
+<link rel="stylesheet" type="text/css" href="user_css/signupPage.css">
+
+        
+
+
+       
+
+        <div class="wrapper">
+            <div class="container main">
+                <div class="row">
+                    <div class="col-md-6 side-image">
+                        
+                    </div>
+                    <div class="col-md-6 right">
+                            <div class="input-box">
+                                <header>Create account</header>
+
+
+                                <form action="/register" method="post" id="signUp" >
+                                    <div class="input-field">
+                                        <input type="text" class="input" id="username" name="username">
+                                        <p id="nameError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                                        <label for="username">Username</label>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="text" class="input" id="email" name="email"  >
+                                        <span id="emailError" class="text-danger mb-3" style="font-size: 13px;"></span>
+                                        <label for="email">Email</label>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="text" class="input" id="mobile" name="mobile"  >
+                                        <span id="mobileError" class="text-danger mb-3" style="font-size: 13px;"></span>
+                                        <label for="number">Mobile</label>
+                                    </div>
+                                    <div class="input-field position-relative">
+                                        <input type="password" class="input" id="password" name="password"  >
+                                        <span id="passwordError" class="text-danger mb-3" style="font-size: 13px;"></span>
+                                        <label for="password">Password</label>
+                                        <span class="password-toggle" id="togglePassword" style="position: absolute; top: 10px; right: 15px;">
+                                            <i class="fas fa-eye" id="eye-icon"></i>
+                                            </span>
+                                    </div>
+                                    <div class="input-field position-relative">
+                                        <input type="password" class="input" id="confirmPassword" name="confirmPassword"  >
+                                        <span id="passwordError" class="text-danger mb-3" style="font-size: 13px;"></span>
+                                        <label for="password">Confirm Password</label>
+                                        <span class="password-toggle" id="toggleConfirmPassword" style="position: absolute; top: 10px; right: 15px;">
+                                            <i class="fas fa-eye" id="confirm-eye-icon"></i>
+                                            </span>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="text" class="input" id="referral" name="referral">
+                                        <p id="" class="text-danger mb-3" style="font-size: 13px;"></p>
+                                        <label for="referral">Referral</label>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="submit" class="submit" value="Sign Up">
+                                    </div>
+                                    <div class="signin">
+                                        <span>Already have an account? <a href="/userlogin">Log in here</a></span>
+                                    </div>
+                                </form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- SignUp form validation -->
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const signUpForm = document.getElementById("signUp");
+                const nameInput = document.getElementById("username");
+                const emailInput = document.getElementById("email");
+                const mobileInput = document.getElementById("mobile");
+                const passwordInput = document.getElementById("password");
+                const confirmPasswordInput = document.getElementById("confirmPassword");
+
+                const nameError = document.getElementById("nameError");
+
+                const emailError = document.getElementById("emailError");
+                const mobileError = document.getElementById("mobileError");
+                const passwordError = document.getElementById("passwordError");
+                
+                signUpForm.addEventListener("submit", function (event) {
+    
+                    //resetting previous error message
+                    nameError.innerHTML = "";
+                    emailError.innerHTML = "";
+                    mobileError.innerHTML = "";
+                    passwordError.innerHTML = "";
+                    passwordError.textContent = "";
+
+                    //validate emailInput
+                    const passwordValue = passwordInput.value.trim();
+                    const confirmPasswordValue = confirmPasswordInput.value.trim();
+                    const emailValue = emailInput.value.trim();
+                    const nameValue = nameInput.value.trim();
+                    const mobileValue = mobileInput.value.trim();
+
+                    if(nameValue === "") {
+                        event.preventDefault()
+                        nameError.textContent = "Username can't be empty"
+
+                        return
+                    }
+                    if(!isvalidEmail(emailValue)) {
+                        event.preventDefault()
+                        emailError.textContent = "Please enter a valid email address"
+                        return;
+                    }else{
+                        emailError.textContent = ""
+                    }
+
+                    if(emailValue === "") {
+                        event.preventDefault()
+                        emailError.textContent = "Email address can't be empty"
+                        return
+                    }
+
+                    if(mobileValue === "" || mobileValue.length !==10) {
+                        event.preventDefault()
+                        mobileError.textContent = "Mobile Number can't be empty"
+                    }
+
+                    // Validate password input
+                    if(passwordValue === "") {
+                        event.preventDefault()
+                        passwordError.textContent = "Password field can't be empty"
+                        return;
+                    }
+
+                    if(confirmPasswordValue === "") {
+                        event.preventDefault()
+                        passwordError.textContent = "Confirm Password field can't be empty"
+                        return;
+                    }
+
+                    if(passwordValue !== confirmPasswordValue) {
+                        event.preventDefault()
+                        passwordError.textContent = "Password do not match";
+                        return;
+                    }
+
+                    if(!isStrongPassword(passwordValue)) {
+                        event.preventDefault()
+
+                        passwordError.textContent = "Password must be strong (e.g., at least 8 characters, including upper and lower case letters, numbers, and special characters)"
+                        event.preventDefault()
+                        return;
+                    }else{
+                        passwordError.textContent = ""
+                    }
+
+                    function isStrongPassword(password) {
+
+                        // Define your criteria for a strong password
+                        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                        return regex.test(password)
+                    }
+
+                    function isvalidEmail(email) {
+                        return /^[A-Za-z0-9._%+-]+@gmail\.com$/.test(email);
+                    }
+                })
+            });
+
+
+
+
+
+
+            // Password eye-icon show and hide script
+
+            const password = document.getElementById("password");
+            const eyeIcon = document.getElementById("eye-icon");
+            const togglePassword = document.getElementById("togglePassword");
+
+            const confirmInput = document.getElementById("confirmPassword");
+            const confirmEyeIcon = document.getElementById("confirm-eye-icon");
+            const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+
+            togglePassword.addEventListener('click', () => {
+                togglePasswordVisibility(password, eyeIcon)
+            });
+
+            toggleConfirmPassword.addEventListener('click', () => {
+                togglePasswordVisibility(confirmInput, confirmEyeIcon)
+            });
+
+            function togglePasswordVisibility(input, icon) {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type',type);
+
+                // Toggle eye icon
+                if(type === 'password') {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }else{
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash')
+                }
+            }
+
+        </script>
+
+
+
+        <%-include('./userPartials/footer')%>
+
+        
+       

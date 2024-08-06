@@ -1,0 +1,50 @@
+<%-include('./userPartials/header')%>
+
+
+
+    <%-include('./userPartials/navbar')%>
+
+    <link rel="stylesheet" type="text/css" href="/user_css/homePage.css">
+
+
+
+
+
+
+
+
+    <section>
+        <div>
+            <div class="row">
+                <% filteredProducts.forEach(data => { %>
+                    <div class="col-3">
+                        <img src="/productdetails/<%= data.images[0] %>" alt="">
+                        <p><%= data.brand %></p>
+                        <p><%= data.name %></p>
+                        <p><%= data.color %></p>
+                        <p><%= data.price %></p>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <%-include('./userPartials/footer')%>

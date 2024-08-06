@@ -1,0 +1,209 @@
+
+<!-- Nav-bar -->
+<header class="nav-menu">
+    <div class="logo"><a href="/"><img src="../images/Neo_icon.png" alt="logo"></a></div>
+    <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+    <nav class="nav-bar">
+        <div class="pseudo-search">
+            <input type="text"  id="searchInput" placeholder="Search...">
+        
+            <button class="bi bi-search" onclick="searchProducts()" type="submit"></button>
+          </div>
+        <ul>
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li>
+                <a href="/allproducts">Products</a>
+            </li>
+            <li>
+                <a href="#">About</a>
+            </li>
+            <li>
+                <a href="#">Contact</a>
+            </li>
+        </ul>
+        <div class="nav-btns position-relative">
+            <!-- <div>
+                <a class="wishlist-btn" href="#"><i class="bi bi-heart"></i></a>
+            </div> -->
+            
+            <div class="mx-4 position-relative">
+                <% if (cartCount === 0 || cartCount === undefined) { %>
+                    <!-- <span style="position: absolute;top: 0px;right: -10px;background-color: #fff;border-radius: 50px;width: 18px;height: 18px;text-align: center; font-size: 13px;font-weight: 600; display: none;"></span> -->
+                    <% } else { %>
+                        <span style="position: absolute;top: 0px;right: -10px;background-color: #fff;border-radius: 50px;width: 18px;height: 18px;text-align: center; font-size: 13px;font-weight: 600;"><%= cartCount %></span>
+                <% } %>
+                
+                <a class="cart-btn text-white" href="/add-to-Cart"><i class="bi bi-cart3"></i></a>
+            </div>
+
+            <% if (!User) { %>
+                <div class="login-btn">
+                    <a class="login-trigger" href="/userlogin">Login/Register</a>
+                </div>
+                <% } else { %>
+                    <div class="ms-4 position-relative">
+                        <a class="profile-btn text-decoration-none d-flex align-items-center" id="profile-btn" href="#"><i class="bi bi-person"></i><i class="bi bi-caret-down-fill  down-btn"></i></a>
+                        <div class="dropdown " id="dropdown">
+                                
+                            <div class="">
+                                <a href="/user-profile" style="font-size: unset; color: #000; text-decoration: none;"><div class="profile drop-list"><p>My profile</p></div></a>
+                                <a href="/user-wishlist" style="font-size: unset; color: #000; text-decoration: none;"><div class="profile drop-list"><p>Wishlist</p></div></a>
+                                <a href="/order-List" style="font-size: unset; color: #000; text-decoration: none;"><div class="profile drop-list"><p>My order</p></div></a>
+                                <a href="/user-wallet" style="font-size: unset; color: #000; text-decoration: none;"><div class="profile drop-list"><p>Wallet</p></div></a>
+                                <a href="/coupons" style="font-size: unset; color: #000; text-decoration: none;"><div class="profile drop-list"><p>Coupons</p></div></a>
+                                <div class="drop-list">
+                                    <form action="/userlogout" method="post">
+                                    <button class="logout text-start bg-transparent">Logout</button>
+                                </form>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                
+            <% } %>
+        </div>
+    </nav>
+    <div id="searchResults" class="row" style="display: none;"></div>
+</header>
+
+<!-- Nav-bar end -->
+
+
+
+
+<style>
+    /* #searchInput {
+    width: 80%;
+    padding: 8px;
+    margin: 10px auto;
+    display: block;
+} */
+
+#searchResults {
+    /* display: flex; */
+    justify-content: start;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    top: 90px;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 20px 0px;
+    background-color: #fff;
+    margin: auto;
+}
+
+.search-product {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 0px 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    /* width: 18%; */
+    height: fit-content;
+}
+.img{
+    width: 100%;
+    height: 100%;
+}
+</style>
+
+
+
+<!-- Navbar Button clicking animation Js -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {       //Nav-bar toggle
+        var hamburger = document.querySelector(".hamburger");
+        hamburger.onclick = function(){
+            var navBar = document.querySelector(".nav-bar");
+            navBar.classList.toggle("active");
+        };
+
+
+        var profileIcon = document.getElementById('profile-btn');
+var dropdown = document.getElementById('dropdown');
+
+profileIcon.addEventListener('click', function (event) {
+    // Toggle the dropdown visibility
+    if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+    } else {
+        dropdown.style.display = 'block';
+        // Add a class to enable the transition
+        dropdown.classList.add('show-dropdown');
+    }
+    // Stop the event propagation to prevent it from reaching the document click event
+    event.stopPropagation();
+});
+
+document.addEventListener('click', function (event) {
+    // Check if the clicked element is outside of the dropdown and profile-btn
+    if (!profileIcon.contains(event.target) && !dropdown.contains(event.target)) {
+        // Remove the class to disable the transition when hiding the dropdown
+        dropdown.classList.remove('show-dropdown');
+        dropdown.style.display = 'none';
+    }
+});
+
+    });
+</script>
+
+
+
+
+<script>
+    // function searchProducts() {
+    //     const searchInput = document.getElementById('searchInput').value.trim();
+    //     if (searchInput === '') {
+    //         window.location.reload();
+    //     } else {
+    //         if (searchInput.length > 0) {
+    //         fetch(`/products/search?q=${searchInput}`)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 displaySearchResult(data)
+    //             })
+    //             .catch(error => {
+    //                 console.error('Error searching products:', error);
+    //                 alert('An error occurred while searching products. Please try again.');
+    //             })
+    //     }
+    //     }
+    // }
+
+    // function displaySearchResult(result) {
+    //     const searchResultDiv = document.getElementById('searchResults')
+    //     searchResultDiv.innerHTML = '';
+    //     searchResultDiv.style.display = 'flex'
+
+    //     if (result.success && result.data.length > 0) {
+    //         result.data.forEach(product => {
+    //             const productDiv = document.createElement('div');
+    //             productDiv.classList.add('search-product', 'col-2');
+    //             productDiv.innerHTML = `
+    //         <a href="/productdetails/${product._id}"><img src="/productImages/${product.images[0]}" class="image-fluid" height="250px" width="100%" alt="hello"></a>
+    //         <p class="text-secondary">${product.brand}</p>
+    //         <p class="fw-bold text-truncate">${product.name}</p>
+    //         <p>${product.color}</p>
+    //         <p class="fw-bold">${product.price}</p>
+    //     `;
+    //             searchResultDiv.appendChild(productDiv);
+    //         });
+    //     } else {
+    //             const productDiv = document.createElement('div');
+    //             productDiv.classList.add('no-product', 'text-center');
+    //             productDiv.innerHTML = `<p class="fw-bold">No products found</p>`;
+    //             searchResultDiv.appendChild(productDiv);
+    //     }
+
+    // }
+
+</script>

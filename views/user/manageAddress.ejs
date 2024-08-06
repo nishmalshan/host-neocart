@@ -1,0 +1,448 @@
+<%-include('./userPartials/header')%>
+
+
+
+    <%-include('./userPartials/navbar')%>
+
+    <link rel="stylesheet" type="text/css" href="/user_css/homePage.css">
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap');
+    
+        .product-text-container {
+    
+          border-radius: 12px;
+          height: 56px;
+          margin-top: 53px;
+          box-shadow: 0px 0px 7px -3px;
+        }
+    
+        .data {
+          border-radius: 12px;
+          box-shadow: 0px 0px 7px -3px;
+        }
+    
+        .main {
+          overflow-x: hidden;
+        }
+      </style>
+
+
+
+<div class="main">
+    <% if (addressErrorMessage && addressErrorMessage.length > 0) { %>
+     
+        <span class="text-center mt-4 " id="errorShow">
+            <%= addressErrorMessage %>
+        </span>
+        <% } %>
+
+        
+        <style>
+            /* CSS */
+@keyframes slideIn {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+#errorShow {
+  color: #fff;
+  font-weight: bold;
+  width: 45%;
+  padding: 10px;
+  background: radial-gradient(circle at 10% 20%, rgb(226, 37, 37) 0%, rgb(211, 49, 49) 82.8%);
+  position: fixed;
+  top: 25px;
+  left: 50%;
+  right: 50%;
+  transform: translate(-50%, -50%);
+  animation: slideIn 0.5s ease forwards;
+}
+
+        </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        var errorShow = document.getElementById('errorShow');
+        if (errorShow) {
+          errorShow.style.display = 'block';
+          setTimeout(function() {
+            errorShow.style.display = 'none';
+          }, 3000);
+        }
+      }, 0);
+    });
+  </script>
+  
+        <div class="product-text-container p-4 mx-5"
+          style="display: flex; justify-content: center; align-items: center;">
+          <h3 style="font-family: 'Merriweather', serif;   margin-top: 11px;" id="ManageProduct-text">MANAGE ADDRESS
+          </h3>
+        </div>
+
+        <!-- Button trigger modal -->
+        <div class="mx-5 data mt-4 p-3 ">
+          <button type="button " class="btn btn-primary  " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            ADD ADDRESS
+          </button>
+          <a href="/user-profile" class="btn btn-secondary" style="color: #fff; text-decoration: none;"> Back to
+            Profile</a>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+          aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg  ">
+            <div class="modal-content ">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5 " id="staticBackdropLabel">ADD ADDRESS</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="container  mt-5 mb-5 ">
+                <div class="row mx-0 justify-content-center">
+                  <div class="col-md-6 col-lg-6">
+                    <form method="POST" class="w-100 rounded-1 p-4 border bg-white" action="/user-addAddress">
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">Name</span>
+                        <input id="addName" name="name" type="text" class="form-control" placeholder="enter your name"
+                          onchange="validateAddAddressForm()" />
+                        <div id="addNameError" style="color: red; font-size: 13px;"></div>
+                      </label>
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">Address line </span>
+                        <input id="addAddress" name="address" type="text" class="form-control"
+                          placeholder="Address(Area and Street) " onchange="validateAddAddressForm()" />
+                        <div id="addAddressError" style="color: red; font-size: 13px;"></div>
+                      </label>
+
+
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">City</span>
+                        <input id="addCity" name="city" type="text" class="form-control"
+                          placeholder="City/District/Town" onchange="validateAddAddressForm()" />
+                        <div id="addCityError" style="color: red; font-size: 13px;"></div>
+                      </label>
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">State/Province</span>
+                        <input id="addState" name="state" type="text" class="form-control" placeholder="State"
+                          onchange="validateAddAddressForm()" />
+                        <div id="addStateError" style="color: red; font-size: 13px;"></div>
+                      </label>
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">Zip/Postal code</span>
+                        <input id="addPincode" name="pincode" type="text" class="form-control" placeholder="Pincode"
+                          onchange="validateAddAddressForm()" />
+                        <div id="addPincodeError" style="color: red; font-size: 13px;"></div>
+                      </label>
+
+
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">Phone</span>
+                        <input id="addPhone" name="phone" type="text" class="form-control"
+                          placeholder="10-digit mobile number" onchange="validateAddAddressForm()" />
+                        <div id="addPhoneError" style="color: red; font-size: 13px;"></div>
+                      </label>
+
+
+
+                      <div class="mb-3  ">
+                        <button type="submit" class="btn btn-primary px-4 rounded-3"
+                          onclick="return validateAddAddressForm()">
+                          Save
+                        </button>
+                        <button type="button" class="btn btn-danger px-4 rounded-3"
+                          data-bs-dismiss="modal">Close</button>
+
+                      </div>
+
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Understood</button>
+          </div> -->
+            </div>
+          </div>
+        </div>
+        <div class="row mx-5 ">
+          <% User.address.forEach(data=> { %>
+            <div class=" mt-4 col-md-4  ">
+              <div class="card " style=" box-shadow: 0px 0px 7px -3px;border-radius: 12px;">
+                <div class="card-body">
+                  <h5 class="card-title">Address Details</h5>
+                  <p class="card-text">Name: <%= data.name %>
+                  </p>
+                  <p class="card-text">Address: <%= data.address %>
+                  </p>
+                  <p class="card-text">City: <%= data.city %>
+                  </p>
+                  <p class="card-text">State: <%= data.state %>
+                  </p>
+                  <p class="card-text">Pincode: <%= data.pincode %>
+                  </p>
+                  <p class="card-text">Phone: <%= data.phone %>
+                  </p>
+
+                  <!-- Edit and Delete Buttons -->
+                  <div class="">
+                    <button type="button" class="btn btn-primary" onclick="openEditAddressModal('<%= data._id %>')">
+                      EDIT </button>
+                    <button type="button" class="btn btn-danger"
+                      onclick="deleteAddress('<%= data._id %>')">Delete</button>
+                  </div>
+                  <!--edit address modal-->
+
+                  <div class="modal fade" id="editAddressModal<%= data._id %>" tabindex="-1" aria-labelledby="editAddressModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg  ">
+                      <div class="modal-content ">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5 " id="editAddressModallabel">EDIT ADDRESS</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="container  mt-5 mb-5 ">
+                          <div class="row mx-0 justify-content-center">
+                            <div class="col-md-6 col-lg-6">
+                              <!--edit address form -->
+                              <form method="POST" class="w-100 rounded-1 p-4 border bg-white"
+                                action="/user-editAddress/<%= data._id %>">
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">Name</span>
+                                  <input id="name_" name="name" type="text" value="<%= data.name %>"
+                                    class="form-control" placeholder="enter your name"
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="name-validation-message_" style="color: red; font-size: 13px;"></div>
+
+                                </label>
+
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">Address line </span>
+                                  <input id="address_" name="address" type="text" class="form-control"
+                                    value="<%= data.address %>" placeholder="Address(Area and Street) "
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="address-validation-message_" style="color: red; font-size: 13px;"></div>
+
+                                </label>
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">City</span>
+                                  <input id="city_" name="city" type="text" class="form-control"
+                                    placeholder="City/District/Town" value="<%=data.city%>"
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="city-validation-message_" style="color: red; font-size: 13px;"></div>
+
+                                </label>
+
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">State/Province</span>
+                                  <input id="state_" name="state" type="text" class="form-control"
+                                    placeholder="State" value="<%= data.state %>" onchange="validateEditAddressForm()" />
+                                  <div id="state-validation-message_" style="color: red; font-size: 13px;"></div>
+
+                                </label>
+
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">Zip/Postal code</span>
+                                  <input id="pincode_" name="pincode" type="text" class="form-control"
+                                    placeholder="Pincode" value="<%= data.pincode %>"
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="pincode-validation-message_" style="color: red; font-size: 13px;"></div>
+                                </label>
+
+
+
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">Phone</span>
+                                  <input id="number_" name="phone" type="text" class="form-control"
+                                    value="<%= data.phone %>" placeholder="10-digit mobile number"
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="number-validation-message_" style="color: red; font-size: 13px;"></div>
+
+                                </label>
+
+
+
+                                <div class="mb-3  ">
+                                  <button type="submit" id="submitButton_" class="btn btn-primary px-4 rounded-3"
+                                    onclick="return validateEditAddressForm()">
+                                    Save Changes
+                                  </button>
+                                  <button type="button" class="btn btn-danger px-4 rounded-3"
+                                    data-bs-dismiss="modal">Close</button>
+
+                                </div>
+
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+
+
+    
+
+
+    <!-- Add address form validation -->
+
+
+    <script>
+        function validateAddAddressForm() {
+            const name = document.getElementById('addName').value.trim();
+            const address = document.getElementById('addAddress').value.trim();
+            const city = document.getElementById('addCity').value.trim();
+            const state = document.getElementById('addState').value.trim();
+            const pincode = document.getElementById('addPincode').value.trim();
+            const phone = document.getElementById('addPhone').value.trim();
+
+
+            clearAddressFormError();
+
+
+            let isValid = true;
+
+            if (name === '') {
+                displayAddressFormError('Name is required!', 'addNameError');
+                isValid = false;
+            }
+
+            if (address === '') {
+                displayAddressFormError('Address is required!', 'addAddressError');
+                isValid = false;
+            }
+
+            if (city === '') {
+                displayAddressFormError('City is required!', 'addCityError');
+                isValid = false;
+            }
+
+            if (state === '') {
+                displayAddressFormError('State is required!', 'addStateError');
+                isValid = false;
+            }
+
+            if (pincode === '') {
+                displayAddressFormError('Pincode is required!', 'addPincodeError');
+                isValid = false;
+            } else if (!/^\d{6}$/.test(pincode)) {
+                displayAddressFormError('Pincode must be 6 digits!', 'addPincodeError');
+                isValid = false;
+            }
+
+            if (phone === '') {
+                displayAddressFormError('Phone number is required!', 'addPhoneError');
+                isValid = false;
+            } else if (!/^\d{10}$/.test(phone)) {
+                displayAddressFormError('Phone number must be 10 digits!', 'addPhoneError');
+                isValid = false;
+            } else if (/^0+$/.test(phone)) {
+                displayAddressFormError('All digits connot be zero!', 'addPhoneError');
+                isValid = false;
+            }
+
+            return isValid;
+
+        }
+
+
+
+        // Function to display error messages for Add Address form
+            function displayAddressFormError(message, errorContainerId) {
+                const errorContainer = document.getElementById(errorContainerId)
+                errorContainer.innerHTML = message;
+            }
+
+
+
+            // Function to clear error messages for Add Address form
+            function clearAddressFormError() {
+                const errorContainers = ['addNameError', 'addAddressError', 'addCityError', 'addStateError', 'addPincodeError', 'addPhoneError'];
+                errorContainers.forEach(containerId => {
+                    const errorContainer = document.getElementById(containerId);
+                    errorContainer.innerHTML = '';
+                })
+            }
+    </script>
+
+
+    <!-- Add address form validation -->
+
+
+
+
+
+
+   <!-- Include SweetAlert JavaScript -->
+
+
+
+    <script>
+        function openEditAddressModal(addressId) {
+          const modal = document.getElementById('editAddressModal' + addressId);
+          const modalInstance = new bootstrap.Modal(modal, { backdrop: 'static', keyboard: false });
+          modalInstance.show();
+        }
+
+</script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+
+<!-- Include SweetAlert JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function deleteAddress(addressId) {
+    Swal.fire({
+  title: "Are you sure?",
+  text: "You won't be able to revert this!",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes, delete it!"
+}).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/user-deleteAddress/${addressId}`, {
+          method: 'post',
+        }).then(response => response.json())
+          .then((data) => {
+            if (data.success) {
+              Swal.fire({
+                title: 'Deleted!',
+                text: 'Your item has been deleted.',
+                icon: 'success',
+              }).then(() => {
+                window.location.reload();
+              });
+            } else {
+              console.error('Error deleting address', data.message);
+              Swal.fire(
+                'Error!',
+                'An error occurred while deleting the address.',
+                'error'
+              );
+            }
+          })
+      }
+    });
+  }
+</script>
+
+      
+
+  <%-include('./userPartials/footer')%>

@@ -1,0 +1,52 @@
+
+ <%-include('./adminPartials/header')%> 
+
+
+<link rel="stylesheet" href="/admin_css/adminLogin.css">
+     
+
+        <div class="wrapper">
+            <div class="container main">
+                <div class="row">
+                    <div class="col-md-6 side-image">
+                        
+                    </div>
+                    <div class="col-md-6 right">
+                            <div class="input-box">
+                                <header>ADMIN</header>
+                                <form action="/admin/adminlogin" method="post">
+                                    <div class="input-field">
+                                        <input type="text" class="input" id="email" value="admin@gmail.com" name="email" required >
+                                        <label for="email">Email</label>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="password" class="input" id="password" value="123"  name="password" required >
+                                        <label for="password">Password</label>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="submit" class="submit" value="Log In">
+                                    </div>
+                                    <!-- <div class="forgot-password">
+                                        <span><a href="">Forgot password?</a></span>
+                                    </div> -->
+                                    <!-- <div class="signin">
+                                        <span>Don't have an account? <a href="/signup">Sign Up</a></span>
+                                    </div> -->
+                                </form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+         <%-include('./adminPartials/footer')%> 

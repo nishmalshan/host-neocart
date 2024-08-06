@@ -1,0 +1,264 @@
+
+
+<%-include('./userPartials/header')%>
+
+<link rel="stylesheet" type="text/css" href="user_css/loginPage.css">
+
+<style>
+    .google-btn {
+  margin: auto;
+  width: 100%;
+}
+
+
+/* Google Button */
+
+.google-btn {
+  /* width: 200px; */
+  height: 40px;
+  background-color: #4285f4;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  -webkit-transition: background-color 0.218s, border-color 0.218s,
+    box-shadow 0.218s;
+  transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
+}
+.google-btn .google-icon-wrapper {
+  position: absolute;
+  margin-top: 1px;
+  margin-left: 1px;
+  width: 38px;
+  height: 38px;
+  border-radius: 2px;
+  background-color: #fff;
+}
+.google-btn .google-icon {
+  position: absolute;
+  margin-top: 11px;
+  margin-left: 11px;
+  width: 18px;
+  height: 18px;
+}
+.google-btn .btn-text {
+  /* float: right; */
+  /* margin: 11px 18px 0 0; */
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  font-family: "Roboto";
+  font-weight: 500;
+  text-align: center;
+  padding: 10px;
+}
+.google-btn:hover {
+  box-shadow: 0 0 6px #4285f4;
+  cursor: pointer;
+}
+.google-btn:active {
+  background: #1669f2;
+}
+</style>
+            
+
+        <div class="wrapper">
+            <div class="container main">
+                <div class="row position-relative">
+                    <% if (passwordMessage) { %>
+                        <p class="text-danger text-center" id="passwordMessage" style="font-size: 13px; transition: all 0.5s ease-out; position: absolute; top: 20px; right: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;"> 
+                            <%= passwordMessage %> </p>
+                      <% } %>
+                    <div class="col-md-6 side-image">
+                        
+                    </div>
+                    <div class="col-md-6 right">
+                            <div class="input-box">
+                                <% if (block_message) { %>
+        
+                                    <p class="text-danger text-center" id="block-message" style="font-size: 13px; transition: all 0.5s ease-out;"> <%= block_message %> </p>
+
+                                <% } %>
+                                <header>Log In</header>
+                                <form action="/logintohome" method="post" id="login">
+                                    <div class="input-field">
+                                        <input type="text" name="email" class="input" id="email" value="nishmalshan12345@gmail.com" required>
+                                        <p id="emailError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                                        <label for="email">Email</label>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="password" name="password" class="input" id="password" value="Nishmal@123" required >
+                                        <p id="passwordError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                                        <label for="password">Password</label>
+                                        <span class="password-toggle" id="togglePassword" style="position: absolute; top: 10px; right: 15px;">
+                                            <i class="fas fa-eye" id="eye-icon"></i>
+                                            </span>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="submit" class="submit" value="Log In">
+                                    </div>
+                                    <div class="input-field mt-2">
+                                        <a href="/auth/google">
+                                            <div class="google-btn">
+                                              <div class="google-icon-wrapper">
+                                                <img class="google-icon" src="https://i.ibb.co/ydLySMx/google.png" />
+                                              </div>
+                                              <p class="btn-text">Sign up with Google</p>
+                                            </div>
+                                          </a>
+                                    </div>
+                                    <div class="forgot-password">
+                                        <span><a href="/forgetPassword">Forgot password?</a></span>
+                                    </div>
+                                    <div class="signin">
+                                        <span>Don't have an account? <a href="/usersignup">Sign Up</a></span>
+                                    </div>
+                                </form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <script>
+        // Remove block message after 3 seconds with a fade out effect
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                var blockMessage = document.getElementById("block-message");
+                var passwordMessage = document.getElementById("passwordMessage")
+                if (blockMessage) {
+                    blockMessage.style.opacity = "0";
+                    setTimeout(function() {
+                        blockMessage.style.display = "none";
+                    }, 1000); // Wait for the transition to complete before hiding
+                }
+                if (passwordMessage) {
+                    passwordMessage.style.opacity = "0";
+                    setTimeout(function() {
+                        passwordMessage.style.display = "none";
+                    }, 1000); // Wait for the transition to complete before hiding
+                }
+            }, 5000);
+        });
+    </script>
+
+
+
+
+        
+
+
+        <!-- Login form validation -->
+
+        <script>
+
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const loginForm = document.getElementById("login");
+                const emailInput = document.getElementById("email");
+                const passwordInput = document.getElementById("password");
+
+                const emailError = document.getElementById("emailError");
+                const passwordError = document.getElementById("passwordError");
+
+
+                loginForm.addEventListener("submit", function (event) {
+
+                    emailError.innerHTML = "";
+                    passwordError.innerHTML = "";
+
+                    
+                    const emailValue = emailInput.value.trim();
+                    const passwordValue = passwordInput.value.trim();
+
+                    if(!isvalidEmail(emailValue)) {
+                        event.preventDefault()
+                        emailError.textContent = "Please enter a valid email address"
+                        return;
+                    }else{
+                        emailError.textContent = ""
+                    }
+
+                    if(emailValue === "") {
+                        event.preventDefault()
+                        emailError.textContent = "Email address can't be empty"
+                        return;
+                    }
+
+                    if(!isStrongPassword(passwordValue)) {
+                        event.preventDefault()
+                        passwordError.textContent = "Please enter a valid password"
+                        return;
+                    }else{
+                        passwordError.textContent = ""
+                    }
+
+
+                    if(passwordValue === "") {
+                        event.preventDefault()
+                        passwordError.textContent = "Password field can't be empty"
+                        return;
+                    }
+
+
+                // email regex
+                    function isvalidEmail(email) {
+                        return /^[A-Za-z0-9._%+-]+@gmail\.com$/.test(email);
+                    }
+
+
+                // password regex
+                    function isStrongPassword(password) {
+
+                    // Define your criteria for a strong password
+                    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                    return regex.test(password)
+                    }
+
+
+                })
+            })
+
+
+
+
+
+
+            // Password eye-icon show and hide script
+
+            const password = document.getElementById("password");
+            const eyeIcon = document.getElementById("eye-icon");
+            const togglePassword = document.getElementById("togglePassword");
+
+
+            togglePassword.addEventListener('click', () => {
+                togglePasswordVisibility(password, eyeIcon)
+            });
+
+
+            function togglePasswordVisibility(input, icon) {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type',type);
+
+                // Toggle eye icon
+                if(type === 'password') {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }else{
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash')
+                }
+            }
+
+        </script>
+
+
+
+
+
+
+
+
+
+<%-include('./userPartials/footer')%>

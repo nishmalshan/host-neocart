@@ -1,0 +1,240 @@
+<%-include('./adminPartials/sidebar')%> 
+
+
+
+<style>
+    /* .col-sm-12{
+        width: 500px;
+        margin-right: 40px;
+    } */
+    
+.custom-select {
+    display: inline-block;
+    width: 150px; /* Adjust width as needed */
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    vertical-align: middle;
+}
+.custom-select option {
+    background-color: #fff;
+    color: #000;
+}
+.popup-message {
+        width: max-content;
+        position: fixed;
+        top:60px;
+        right: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        z-index: 1000;
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        border-radius: 5px;
+        padding: 15px 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        color: #fff;
+    }
+
+    .popup-message.show {
+        opacity: 1;
+        /* transform: translateY(0); */
+    }
+
+    .popup-success {
+        background: linear-gradient(75.7deg, rgb(34, 126, 34) 3.8%, rgb(99, 162, 17) 87.1%);
+        color: #fff;
+    }
+
+    .popup-error {
+        background-color: #f44336; /* Red */
+        border-left: 5px solid #d32f2f;
+    }
+</style>
+
+<body>
+    <main class="px-4" style="width: 50%;">
+        <h3 class="mt-5 fw-bold">Return Management</h3>
+        <p id="popup-message" class="popup-message"></p>
+        <% if (!orderedDetails || orderedDetails.length < 1) { %>
+            <div class="w-100 vh-100">
+                <img src="/images/No_Returned_Products.png" width="30%" alt="no order image" class="img-fluid d-block m-auto" />
+            </div>
+        <% } else { %>
+            <table id="usersTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>ORDER ID</th>
+                        <th>PRODUCT NAME</th>
+                        <th>SIZE</th>
+                        <th>QUANTITY</th>
+                        <th>PRICE</th>
+                        <th>PAYMENT</th>
+                        <th>STATUS</th>
+                        <th>ORDER DATE</th>
+                        <th>DELIVERY DATE</th>
+                        <th>USER NAME</th>
+                        <th>PHONE</th>
+                        <th>ADDRESS</th>
+                        <th>RETURN REASON</th>
+                        <th>Order status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orderedDetails.forEach((order, index) => { %>
+                        <% order.items.forEach((item, itemIndex) => { %>
+                            <% if (item.status === 'Requested for return' || item.status === 'Accepted' ||  item.status === 'Rejected') { %>
+                                <tr>
+                                    <% if (itemIndex === 0) { %>
+                                        <td rowspan="<%= order.items.length %>"><%= index + 1 %></td>
+                                        <td rowspan="<%= order.items.length %>"><%= order._id %></td>
+                                    <% } %>
+                                    <td><%= item.name %></td>
+                                    <td><%= item.size %></td>
+                                    <td><%= item.quantity %></td>
+                                    <td><span>&#8377</span><%= order.totalPrice %></td>
+                                    <% if (itemIndex === 0) { %>
+                                        <td rowspan="<%= order.items.length %>"><%= order.paymentMethod %></td>
+                                        <td rowspan="<%= order.items.length %>"><%= order.paymentStatus %></td>
+                                        <td rowspan="<%= order.items.length %>"><%= order.orderDate.toLocaleString() %></td>
+                                        <td rowspan="<%= order.items.length %>"><%= order.arrivingDate.toLocaleString() %></td>
+                                        <td rowspan="<%= order.items.length %>"><%= order.address[0].name %></td>
+                                        <td rowspan="<%= order.items.length %>"><%= order.address[0].phone %></td>
+                                        <td rowspan="<%= order.items.length %>"><%= order.address[0].address %></td>
+                                    <% } %>
+                                    <td><%= item.returnReason %></td>
+                                    <td><%= order.status %></td>
+                                    <% if (itemIndex === 0) { %>
+                                        <td rowspan="<%= order.items.length %>">
+                                            <select name="orderStatus" data-order-id="<%= order._id %>" class="custom-select orderStatus">
+                                                <option value="" disabled>Select Status</option>
+                                                <option value="Pending" <% if (item.status === 'Requested for return') { %> selected <% } %>>Pending</option>
+                                                <option value="Accepted" <% if (item.status === 'Accepted') { %> selected <% } %>>Accept</option>
+                                                <option value="Rejected" <% if (item.status === 'Rejected') { %> selected <% } %>>Reject</option>
+                                            </select>
+                                            <button class="btn btn-success text-center" onclick="updateReaturnOrderStatus(this, '<%= item._id %>')">Update</button>
+                                        </td>
+                                    <% } %>
+                                </tr>
+                            <% } %>
+                        <% }) %>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </main>
+    
+</body>
+
+
+
+
+
+
+
+
+
+
+<!-- data table link -->
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    jQuery.noConflict();
+    jQuery(document).ready(function($) {
+        $('#usersTable').DataTable();
+    });
+</script>
+
+
+
+
+
+
+<script>
+
+    function updateReaturnOrderStatus(button, itemId) {
+        console.log('111111111111111111111111');
+        const popupMessage = document.getElementById('popup-message');
+    
+        function showMessage(message, isSuccess) {
+            popupMessage.innerText = message;
+            popupMessage.classList.add(isSuccess ? 'popup-success' : 'popup-error');
+            popupMessage.classList.add('show');
+            setTimeout(() => {
+                popupMessage.classList.remove('show');
+                setTimeout(() => {
+                    popupMessage.classList.remove(isSuccess ? 'popup-success' : 'popup-error');
+                    window.location.reload();
+                }, 500); // Wait for the animation to finish
+            }, 2000);
+        }
+    
+        var row = button.closest('tr');
+        var selectedStatus = row.querySelector('.orderStatus').value;
+        var orderId = row.querySelector('.orderStatus').getAttribute('data-order-id');
+    
+        console.log(selectedStatus, 'sssssssssssssss');
+        console.log(orderId, 'ooooooooooooooooiiiiiiii');
+        console.log(itemId, 'iiiiiiiiiiiiiiii');
+    
+        var requestBody = JSON.stringify({
+            status: selectedStatus,
+            orderId: orderId,
+            itemId: itemId
+        });
+    
+        fetch('/admin/change-returnStatus', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: requestBody
+        })
+        .then(response => response.json()) // Ensure the response is parsed as JSON
+        .then(data => {
+            if (data.success) {
+                console.log('success');
+                showMessage(data.message, true);
+            } else {
+                console.log('failed');
+                console.error('Failed to update return status.');
+                showMessage(data.message || 'Failed to update return status.', false);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showMessage('An error occurred. Please try again.', false);
+        });
+    }
+    </script>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%-include('./adminPartials/footer')%>

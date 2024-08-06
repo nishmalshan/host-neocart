@@ -1,0 +1,627 @@
+<%-include('./userPartials/header')%>
+
+
+
+    <%-include('./userPartials/navbar')%>
+
+    <link rel="stylesheet" type="text/css" href="/user_css/homePage.css">
+
+
+  
+
+  <section class="py-5">
+    <div class="container">
+      <div class="row gx-5">
+        <aside class="col-lg-6">
+          <div class="rounded-4 mb-3 d-flex justify-content-center align-items-center" style="cursor: pointer; overflow: hidden;" id="mainImageContainer">
+            <img style="width: 70%; margin: auto;" class="mainImage rounded-4 fit" src="/productImages/<%= productDetailsData.images[0] %>" />
+        </div>
+        <div class="d-flex justify-content-center mb-3" style="cursor: pointer;">
+            <% productDetailsData.images.forEach((data, index) => { %>
+            <a data-fslightbox="mygalley" class="border mx-1 rounded-2" data-type="image" onclick="changeMainImage('<%= data %>')">
+                <img width="60" height="60" class="sub-images rounded-2" src="/productImages/<%= data %>" />
+            </a>
+            <% }) %>
+        </div>
+          <!-- <div class="d-flex justify-content-center mb-3" style="cursor: pointer;">
+            <% productDetailsData.images.forEach(data => { %>
+            <a data-fslightbox="mygalley" class="border mx-1 rounded-2"  data-type="image">
+               <img width="60" height="60" class="sub-images  rounded-2" src="/productImages/<%= data %>" />
+              </a>
+              <% }) %>
+
+          </div> -->
+          <!-- thumbs-wrap.// -->
+          <!-- gallery-wrap .end// -->
+        </aside>
+        <main class="col-lg-6">
+          <div class="ps-lg-3">
+            <h3 class="title text-dark fw-bold">
+              <%= productDetailsData.name %>
+            </h3>
+        
+            <div class="my-3">
+              <% if (productDetailsData.discountAmount > 0) { %>
+                <span class="h5">MRP: <span class="text-success fw-bold"><%= productDetailsData.discountedPrice %>&#8377;</span></span>
+                <span class="h5 ms-3 text-muted text-decoration-line-through"><%= productDetailsData.price %>&#8377;</span>
+              <% } else { %>
+                <span class="h5">MRP: <%= productDetailsData.price %>&#8377;</span>
+              <% } %>
+            </div>
+            
+        
+            <div class="mb-4">
+              <p style="font-size: 15px; color: #646464;"><%= productDetailsData.description %></p>
+            </div>
+        
+            <div class="row">
+              <dt class="col-3">Type:</dt>
+              <dd class="col-9"><%= productDetailsData.categoryName %></dd>
+        
+              <dt class="col-3">Color</dt>
+              <dd class="col-9"><%= productDetailsData.color %></dd>
+        
+              <dt class="col-3">Brand</dt>
+              <dd class="col-9"><%= productDetailsData.brand %></dd>
+            </div>
+        
+            <hr />
+        
+            <div class="row mb-4">
+              <p class="text-danger mb-2" style="font-size: 14px;" id="sizeErrorMessage"></p>
+              <% productDetailsData.variant.sort((a,b) => a.size - b.size).forEach(data => { %>
+                <div class="col-1">
+                  <div class="size-selector">
+                    <div class="size-box">
+                      <button class="btn btn-size border border-dark" id="sizeButton" data-quantity="<%= data.quantity %>" data-size="<%= data.size %>" <%= data.quantity < 1 ? 'disabled' : '' %>><%= data.size %></button>
+                    </div>
+                    <p class="text-danger low-stock-message" style="font-size: 12px; margin-top: 5px;"></p>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+        
+            <div class="buttons">
+              <button class="btn btn-dark shadow-0" data-item-id="<%= productDetailsData.id %>" style="padding: 5px 20px; font-weight: 600;" id="addtoCart"><i class="bi bi-cart3 fs-4"></i> ADD TO CART </button>
+            <% if (wishlistProduct && productDetailsData.id.toString() === wishlistProduct.productId.toString()) { %>
+              <a href="/user-addToWishlist" class="wishlist-fvrte-btn text-decoration-none fs-3 ms-3" data-item-id="<%= productDetailsData.id %>" id="addToWishlist">
+                <!-- <i class="fa-solid"></i> -->
+                 <img src="../images/wishlist-icon.png" alt="">
+              </a>
+            <% } else { %>
+              <a href="/user-addToWishlist" class="wishlist-fvrte-btn text-decoration-none fs-3 ms-3" data-item-id="<%= productDetailsData.id %>" id="addToWishlist">
+                <i class="icon-heart"></i>
+              </a>
+            <% } %>
+            </div>
+            
+          </div>
+        </main>
+        
+      </div>
+    </div>
+  </section>
+
+
+  
+<hr class="m-auto" width="90%" style="border-style: inset; border: 1px solid #898989;">
+
+  <section  style="margin: 70px 0; padding: 20px;">
+    <% if (relatedProducts) { %>
+        <div class="container">
+          <div class="header-mark mb-5 d-flex justify-content-start align-items-center">
+            <span></span>
+            <h5 class="mb-0 ms-2">Related Products</h5>
+        </div>
+            <div class="row">
+                <% relatedProducts.forEach(data => { %>
+                 
+                    <div class="wishlist col-lg-3 col-md-3 col-6 px-3">
+                        <div class="sub-wishlist position-relative">
+                            <a href="/productdetails/<%= data.id %>" class="text-decoration-none">
+                                <img src="/productImages/<%= data.images[0] %>" class="image-fluid" height="250px" width="100%" alt="">
+                                <div class="sub-wishlist-btn">
+                                    <!-- <a href=""><i class="bi bi-cart3"></i>Add To Cart</a> -->
+                                    <p class=""><%= data.brand %></p>
+                                    <p class="text-truncate"><%= data.name %></p>
+                                    <p class=""><%= data.color %></p>
+                                    <p class=""><%= data.price %><span>&#8377</span></p>
+                                </div>
+                            </a>
+                            <!-- <div class="cart-btn-div">
+                                <button type="button"><i class="bi bi-cart3 fs-4"></i> Add to cart</button>
+                            </div> -->
+                        </div>
+                    </div>
+                <% }) %>
+                
+            </div>
+        </div>
+     <% } %>
+     <div class="viewAllBtn my-5 text-center ">
+      <a href="/allproducts" class="btn btn-success">View All</a>
+  </div>
+</section>
+
+
+
+
+
+
+
+<style>
+
+  .sub-wishlist-header{
+      background-color: #ededed;
+  }
+  .sub-wishlist{
+      box-shadow: 5px 5px 10px 1px rgba(0,0,0,0.2);
+      border-radius: 5px;
+      transition: 0.3s;
+      cursor: pointer;
+  }
+  .sub-wishlist:hover{
+      transform: scale(1.03);
+  }
+  .sub-wishlist img{
+      width: 100%;
+      border-radius: 5px 5px 0px 0px;
+  }
+  .sub-wishlist-fvrte-btn{
+      text-decoration: none;
+      color: #11101b;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+  }
+  .sub-wishlist i{
+      font-weight: 600;
+      font-size: 20px;
+  }
+  .sub-wishlist p{
+      margin-bottom: 0;
+  }
+  .sub-wishlist-btn{
+      padding: 10px;
+      border-radius: 0px 0px 5px 5px;
+  }
+  .sub-wishlist-btn p{
+      font-weight: 600;
+      font-size: 16px;
+  }
+  /* .sub-wishlist-btn span{
+      font-family: Arial, Helvetica, sans-serif;
+  } */
+  .sub-wishlist-btn p:nth-child(1), .sub-wishlist-btn p:nth-child(3){
+      color: #979797;
+      font-size: 14px;
+      font-weight: 500;
+  }
+  .sub-wishlist-btn i{
+      font-size: 24px;
+      margin-right: 5px;
+  }
+  .header-mark span{
+      background-color: #B05574;
+      padding: 13px 2px;
+      border-radius: 50px;
+  }
+  .cart-btn-div {
+  font-size: 22px;
+  background-color: cornflowerblue;
+  width: 100%;
+  border-radius: 0px 0px 5px 5px;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  display: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.sub-wishlist:hover .cart-btn-div {
+  display: block;
+  transition: all 0.3s ease-in-out;
+}
+
+.cart-btn-div button {
+  width: 100%;
+  padding: 5px 20px;
+  background-color: cornflowerblue;
+  border: none;
+}
+
+  @media (max-width: 768px){
+      .wishlist{
+          margin-top: 40px;
+          padding: 0px 15px;
+      }
+      
+  }
+  @media (max-width: 576px){
+      .wishlist{
+          margin-top: 40px;
+          padding: 0px 15px;
+      }
+      
+  }
+      </style>
+
+  
+ 
+
+
+
+  <style>
+    /* .buy-now{
+      padding: 12px 30px;
+      font-weight: 600;
+      background: transparent;
+      border: 1px solid #b3b3b3;
+      transition: all 0.3s;
+    }
+    .buy-now:hover{
+      border: 1px solid #000;
+      background: transparent;
+    }
+      .icon-hover:hover {
+    border-color: #d80000 !important;
+    background-color: white !important;
+    color: #d80000 !important;
+  }
+  
+  .icon-hover:hover i {
+    color: #d80000 !important;
+  }
+  .wishlist-fvrte-btn{
+    padding: 7px 10px;
+    border-radius: 50px;
+  } */
+  .icon-heart {
+    background: url('http://i.imgur.com/MIP7hPg.png');
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: auto;
+    height: 100px;
+    width: 100px;
+    cursor: pointer;
+    display: inline-block;
+}
+.icon-heart--clicked {
+   -webkit-animation: animateLove 1s steps(14, start);
+   background-position: right;
+}
+
+@-webkit-keyframes animateLove {
+   0% { background-position: 0px 0px; }
+   100% { background-position: -2800px 0px; }
+}
+.buttons{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+/* .fa-solid{
+  background-image: url(../images/wishlist-icon.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+} */
+  </style>
+
+
+  
+  
+
+
+
+  <!-- image zoom -->
+  
+
+  <script>
+    function changeMainImage(imageUrl) {
+        const mainImage = document.querySelector('.mainImage');
+        mainImage.src = '/productImages/' + imageUrl;
+    }
+
+    const mainImageContainer = document.getElementById('mainImageContainer');
+    mainImageContainer.addEventListener('mousemove', function(event) {
+        const mainImage = document.querySelector('.mainImage');
+        const rect = mainImage.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const ratioX = x / rect.width;
+        const ratioY = y / rect.height;
+        mainImage.style.transformOrigin = `${ratioX * 100}% ${ratioY * 100}%`;
+        mainImage.style.transform = 'scale(1.5)'; // Adjust zoom level as needed
+    });
+
+    mainImageContainer.addEventListener('mouseleave', function() {
+        const mainImage = document.querySelector('.mainImage');
+        mainImage.style.transform = 'none';
+    });
+</script>
+
+
+  <!-- image zoom -->
+
+
+
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Get all buttons with the class 'btn-size'
+      var buttons = document.querySelectorAll('.btn-size');
+
+      // Add click event listeners to the buttons
+      buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          // Remove 'selected' class from all buttons
+          buttons.forEach(function (btn) {
+            btn.classList.remove('selected');
+          });
+
+          // Add 'selected' class to the clicked button
+          button.classList.add('selected');
+
+          // Optionally, you can perform additional actions when a size is selected
+          var selectedSize = button.innerText;
+        });
+      });
+    });
+  </script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('addtoCart').addEventListener('click', async function() {
+      const selectedSizeElement = document.querySelector('.btn-size.selected');
+      const sizeErrorMessage = document.getElementById('sizeErrorMessage');
+
+      if (!selectedSizeElement) {
+          // No size selected, show an error message
+          sizeErrorMessage.innerHTML = "Please select an available size before adding to cart";
+          return; // Stop execution
+      } else {
+        // Size selected, hide the error message
+      sizeErrorMessage.innerHTML = "";
+
+const selectedSize = selectedSizeElement.getAttribute('data-size');
+const productId = '<%= productDetailsData.id %>';
+const price = '<%= productDetailsData.price - productDetailsData.discountAmount %>'
+console.log(price,'ppppppppppppppppp');
+
+try {
+    const response = await fetch('/add-to-Cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId: productId, selectedSize: selectedSize, price: price })
+    });
+
+    const responseData = await response.json();
+
+    if (responseData.success) {
+
+        // Show success message using SweetAlert
+        await Swal.fire({
+            icon: 'success',
+            title: 'Item added to cart',
+            text: 'The item has been successfully added to your cart.',
+            confirmButtonColor: '#28a745',
+            confirmButtonText: 'OK',
+        });
+
+        // Corrected line to use window.location.href for redirection
+        window.location.reload();
+    } else {
+        console.error('Failed to add item to cart. Response:', responseData);
+        // const sizeErrorMessage = document.getElementById('sizeErrorMessage').innerHTML = responseData.quantityCount
+        // You can add more specific error handling or logging here
+    }
+} catch (error) {
+    console.error('Error during fetch:', error);
+    // Handle fetch error, if any
+}
+      }
+
+      
+    });
+  });
+</script>
+
+
+
+
+<script>
+  $(document).ready(function() {
+
+    $('#addToWishlist').on('click', function(e) {
+      e.preventDefault();
+
+      var productId = $(this).data('item-id');
+
+      $.ajax({
+        url: '/user-addToWishlist',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ productId: productId }),
+        success: function(response) {
+          if (response.success) {
+
+            // Create the success message element and animation using response message and icon
+            // var message = $('<div>')
+            //       .attr('id', 'wishlistSuccessMessage')
+            //       .html('<i class="fa-solid fa-circle-check" style="color: #0cb800; margin-right: 10px"></i> ' + response.message)
+            //       .css({
+            //         'width': 'max-content',
+            //         'position': 'fixed',
+            //         'top': '50px',
+            //         'right': '50%',
+            //         'left': '50%',
+            //         'transform': 'translate(-50%, -50%)',
+            //         'background': '#212121',
+            //         'color': 'white',
+            //         'padding': '10px',
+            //         'border-radius': '5px',
+            //         'border': '#212121',
+            //         'box-shadow': '1px 0 2px 0 rgba(0,0,0,.2)',
+            //         'z-index': '1000',
+            //         'display': 'none'
+            //       });
+
+            // $('body').append(message);
+
+            if (response.action === 'added') {
+              // Trigger the animation by adding the --clicked class
+              $('#addToWishlist .icon-heart').addClass('icon-heart--clicked');
+            }
+
+            // message.slideDown(300).animate({ top: '120px' }, { duration: 500 });f
+
+            setTimeout(function() {
+              // message.fadeOut(300, function() {
+                // message.remove();
+                location.reload();
+              // });
+            }, 800);
+
+          } else {
+
+            var message = $('<div>')
+                  .attr('id', 'wishlistSuccessMessage')
+                  .html(response.message || 'User not logged in')
+                  .css({
+                    'width': 'max-content',
+                    'position': 'fixed',
+                    'top': '50px',
+                    'right': '50%',
+                    'left': '50%',
+                    'transform': 'translate(-50%, -50%)',
+                    'background': '#D10000',
+                    'color': 'white',
+                    'padding': '10px',
+                    'border-radius': '5px',
+                    'border': '#D10000',
+                    'box-shadow': '1px 0 2px 0 rgba(0,0,0,.2)',
+                    'z-index': '1000',
+                    'display': 'none'
+                  });
+
+            $('body').append(message);
+
+            message.slideDown(300).animate({ top: '120px' }, { duration: 500 });
+
+            setTimeout(function() {
+              message.fadeOut(300, function() {
+                message.remove();
+              });
+            }, 2000);
+
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('Error:', error);
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var mainImage = document.querySelector('.mainImage');
+      var subImages = document.querySelectorAll('.sub-images');
+
+      // Set the initial source of mainImage
+      mainImage.src = subImages[0].src;
+
+      subImages.forEach((image, index) => {
+        image.addEventListener('click', function () {
+          // Change the source of mainImage based on the clicked image
+          mainImage.src = this.src;
+        });
+      });
+
+      // Change the mainImage when clicked inside mainImage container
+      mainImage.addEventListener('click', function () {
+        // Increment the current index
+        currentIndex = (currentIndex + 1) % subImages.length;
+
+        // Change the source of mainImage
+        mainImage.src = subImages[currentIndex].src;
+      });
+    });
+</script>
+
+  
+  
+
+
+
+<!-- when button click show the quantity left -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sizeButtons = document.querySelectorAll('.btn-size');
+    
+    sizeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Reset all buttons to default color
+            sizeButtons.forEach(btn => {
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+            });
+
+            // Change the color of the clicked button
+            this.style.backgroundColor = 'black';
+            this.style.color = 'white';
+
+            const quantity = parseInt(this.getAttribute('data-quantity'));
+            const lowStockMessage = this.parentElement.nextElementSibling;
+            
+            // Check if quantity is less than 4
+            if (quantity < 4) {
+                lowStockMessage.textContent = `${quantity} Stock left`;
+            } else if (quantity < 1) {
+                lowStockMessage.textContent = 'Out of stock';
+            } else {
+                lowStockMessage.textContent = ''; // Clear the message if quantity is sufficient
+            }
+        });
+    });
+});
+
+  </script>
+  
+
+
+
+
+<%-include('./userPartials/footer')%>

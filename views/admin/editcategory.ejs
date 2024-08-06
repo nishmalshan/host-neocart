@@ -1,0 +1,107 @@
+
+<%-include('./adminPartials/header')%>
+        
+
+
+
+        <div class="container d-flex justify-content-center align-items-center vh-100">
+            <div class="category-edit w-50 rounded shadow p-3 mb-5 bg-body rounded border border-dark-subtle">
+                <div class="p-4">
+                    <h3 class="mb-5 fw-bold">Edit Category</h3>
+                    <form action="/admin/editcategory/<%= categoryData.id %>" enctype="multipart/form-data" method="post">
+                        <div class="p-2">
+                          <label class="fw-bold mb-2" for="">Category name</label> <br>
+                          <input class="w-75 px-1 py-2 border rounded-2" value="<%= categoryData.name %>" onchange="return validateForm()" type="text" name="categoryName" id="categoryName" placeholder="Enter category name" required>
+                          <p id="categoryNameError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                        </div>
+                        <!-- Display the current image -->
+                        <div class="p-2">
+                          <label class="fw-bold mb-2" for="">Current Image</label> <br>
+                          <img src="/categoryImages/<%= categoryData.image %>" width="15%" alt="Current Image" class="img-thumbnail">
+                        </div>
+                        <!-- File input for updating image -->
+                        <div class="p-2">
+                          <label class="fw-bold mb-2" for="">Upload new image</label> <br>
+                          <input class="rounded-2 border" type="file" onchange="fileValidation()" id="categoryImage" name="categoryImage" accept="image/*">
+                          <p id="categoryImageError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                        </div>
+                        <div class="buttons mt-2">
+                          <button type="submit" class="btn btn-success">Save changes</button>
+                          <a href="/admin/category"><button type="button" class="btn btn-outline-dark">Cancel</button></a>
+                        </div>
+                      </form>
+                      
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <style>
+            h3, label, button, input{
+                font-family: "Inter", sans-serif;
+            }
+        </style>
+
+
+
+
+
+
+
+
+<!-- edit category name validation -->
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('categoryName').addEventListener('input',validateForm)
+  })
+
+  function validateForm() {
+      var categoryNameInput = document.getElementById('categoryName').value.trim();
+      var submitButton = document.getElementById('submit-button');
+      var categoryNameError = document.getElementById('categoryNameError');
+
+      if(categoryNameInput === "") {
+          categoryNameError.textContent = "Category name is required"
+          submitButton.disabled = true;
+      }else{
+          categoryNameError.textContent = ""
+          submitButton.disabled = false;
+      }
+  }
+
+
+
+
+
+
+  // Edit categoty image file type validation
+  
+  function fileValidation() {
+
+      var submitButton = document.getElementById('submit-button');
+      var categoryImageInput = document.getElementById("categoryImage");
+      var filePath = categoryImageInput.value;
+
+      // Allowing file type
+      var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+
+      if(!allowedExtensions.exec(filePath)) {
+          var errorMessage = document.getElementById("categoryImageError")
+          errorMessage.textContent = "Please add a valid image with supported formats (JPG, JPEG, PNG, GIF)";
+          categoryImageInput.value = '';
+          return false;
+      }else{
+
+        errorMessage.textContent = "";
+      }
+  }
+</script>
+
+
+
+
+        <%-include('./adminPartials/footer')%>

@@ -1,0 +1,797 @@
+
+<%-include('./userPartials/header')%>
+
+
+
+    <%-include('./userPartials/navbar')%>
+
+       
+<link rel="stylesheet" type="text/css" href="/user_css/homePage.css">
+
+
+
+<!-- header carousel start -->
+
+
+        <main>
+            <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="/images/carousel_banner/image.jpeg" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="/images/carousel_banner/oxford-knits_D_Webbanner_1920_800_x1360.jpg" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="/images/carousel_banner/Web-Banner_The-Comfornauts_DF_050724_x1360.jpg" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="images/carousel_banner/cover1.jpeg" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="/images/carousel_banner/block-heel-laofer_D_Webbanner_1920_800_x1360.jpg" class="d-block w-100" alt="...">
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+        </main>
+
+
+<!-- header carousel end -->
+
+
+
+
+        <!-- category section start -->
+
+        
+        <section style="margin: 100px 0px;">
+            <div class="header text-center my-4">
+                <h2 class="fw-bold">CATEGORY</h2>
+            </div>
+
+            <div class="category-container">
+                <div id="slide-left-container">
+                  <div class="slide-left">
+                  </div>
+                </div>
+                <div id="cards-container">
+                  <div class="cards">
+                    <% categoryData.forEach(data => { %>
+                        <div class="card sub-category col-lg-3 col-md-3 col-sm-6 p-3">
+                            <div class="casual position-relative">
+                                <div class="text">
+                                    <h1 class="text-white text-uppercase"><%= data.name %></h1>
+                                    <!-- <p>Elevate Your Fashion<br>Game</p> -->
+                                </div>
+                                <img src="/categoryImages/<%=data.image%>" alt="">
+                            </div>
+                        </div>
+                    <% }) %>
+                    
+                  </div>
+                </div>
+            
+                <div id="slide-right-container">
+                  <div class="slide-right">
+                  </div>
+                </div>
+            
+              </div>
+        </section>
+
+            
+
+
+
+
+
+
+
+
+          <style>
+            /* body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #00b09b;
+      background: -webkit-gradient(
+        linear,
+        left top,
+        right top,
+        from(#96c93d),
+        to(#00b09b)
+      );
+      background: linear-gradient(to right, #96c93d, #00b09b);
+    }
+     */
+    .category-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      padding: 4px 50px;
+    }
+    
+    #cards-container {
+      overflow: hidden;
+      margin: 20px;
+    }
+    
+    .cards {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      /* width: 99999px; */
+    }
+    
+    .card {
+      /* Add shadows to create the "card" effect */
+      -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      background: #fff;
+      -webkit-transition: 0.3s;
+      transition: 0.3s;
+      width: 235px;
+      margin: 15px 7.5px;
+    }
+    
+    .card:hover {
+      -webkit-box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+    
+    .card .img {
+      max-width: 220px;
+      height: 220px;
+      display: inline-block;
+    }
+    
+    #slide-left-container,
+    #slide-right-container {
+      display: none;
+    }
+    
+    #slide-left-container.active,
+    #slide-right-container.active {
+      display: block;
+      cursor: pointer;
+    }
+    
+    .slide-left,
+    .slide-right {
+      border-color: #000;
+      border-style: solid;
+      height: 20px;
+      width: 20px;
+      margin-top: 30%;
+    }
+    
+    .slide-left {
+      border-width: 4px 0 0 4px;
+      -webkit-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+      margin-left: 40%;
+    }
+    
+    .slide-right {
+      border-width: 4px 4px 0 0;
+      -webkit-transform: rotate(45deg);
+      transform: rotate(45deg);
+      margin-left: 22%;
+    }
+    
+          </style>
+        
+        
+        
+        
+        
+ 
+        
+        
+<!-- Include jQuery library -->
+<!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script> -->
+
+<script>
+    $(document).ready(function() {
+        /**
+         * @description Change Home page slider's arrows active status
+         */
+        function updateSliderArrowsStatus(
+            cardsContainer,
+            containerWidth,
+            cardCount,
+            cardWidth
+        ) {
+            if (
+                $(cardsContainer).scrollLeft() + containerWidth <
+                cardCount * cardWidth + 15
+            ) {
+                $("#slide-right-container").addClass("active");
+            } else {
+                $("#slide-right-container").removeClass("active");
+            }
+            if ($(cardsContainer).scrollLeft() > 0) {
+                $("#slide-left-container").addClass("active");
+            } else {
+                $("#slide-left-container").removeClass("active");
+            }
+        }
+
+        // Scroll products' slider left/right
+        let div = $("#cards-container");
+        let cardCount = $(div)
+            .find(".cards")
+            .children(".card").length;
+        let speed = 300;
+        let containerWidth = $(".container").width();
+        let cardWidth = 250;
+
+        updateSliderArrowsStatus(div, containerWidth, cardCount, cardWidth);
+
+        // Remove scrollbars
+        $("#slide-right-container").click(function(e) {
+            if ($(div).scrollLeft() + containerWidth < cardCount * cardWidth) {
+                $(div).animate(
+                    {
+                        scrollLeft: $(div).scrollLeft() + cardWidth
+                    },
+                    {
+                        duration: speed,
+                        complete: function() {
+                            setTimeout(function() {
+                                updateSliderArrowsStatus(
+                                    div,
+                                    containerWidth,
+                                    cardCount,
+                                    cardWidth
+                                );
+                            }, 1005);
+                        }
+                    }
+                );
+            }
+            updateSliderArrowsStatus(div, containerWidth, cardCount, cardWidth);
+        });
+        $("#slide-left-container").click(function(e) {
+            if ($(div).scrollLeft() + containerWidth > containerWidth) {
+                $(div).animate(
+                    {
+                        scrollLeft: "-=" + cardWidth
+                    },
+                    {
+                        duration: speed,
+                        complete: function() {
+                            setTimeout(function() {
+                                updateSliderArrowsStatus(
+                                    div,
+                                    containerWidth,
+                                    cardCount,
+                                    cardWidth
+                                );
+                            }, 1005);
+                        }
+                    }
+                );
+            }
+            updateSliderArrowsStatus(div, containerWidth, cardCount, cardWidth);
+        });
+
+        // If resize action occurred then update the container width value
+        $(window).resize(function() {
+            try {
+                containerWidth = $("#cards-container").width();
+                updateSliderArrowsStatus(div, containerWidth, cardCount, cardWidth);
+            } catch (error) {
+                console.log(`Error occurred while trying to get updated slider container width: ${error}`
+                );
+            }
+        });
+    });
+</script>
+
+        <!-- category section end -->
+
+
+
+
+        <!-- best selling section start -->
+
+        <!-- <div class="best-seller-header"  style="margin: 100px 0; margin-bottom: 0;">
+            <div class="container header-mark my-5 py-4 d-flex justify-content-start align-items-center">
+                <span></span>
+                <h2 class="mb-0 ms-2">Best Selling</h2>
+            </div>
+        </div>
+        <section  style="margin: 100px 0; margin-top: 0;">
+            <div class="container">
+                <div class="row">
+                    <div class="best-selling col-lg-3 col-md-3 col-6 px-3">
+                        <div class="best-seller position-relative">
+                            <a href="" class="wishlist-fvrte-btn"><i class="bi bi-heart"></i></a>
+                            <img src="images/best_selling_image.jpeg" alt="">
+                            <div class="best-seller-btn">
+                                <p class="">Nike</p>
+                                <p class="">Nike Air Max Pulse</p>
+                                <p class="">Black</p>
+                                <p class=""><span>&#8377</span>8299</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="best-selling col-lg-3 col-md-3 col-6 px-3">
+                        <div class="best-seller position-relative">
+                            <a href="" class="wishlist-fvrte-btn"><i class="bi bi-heart"></i></a>
+                            <img src="images/best_selling_image.jpeg" alt="">
+                            <div class="best-seller-btn">
+                                <p class="">Nike</p>
+                                <p class="">Nike Air Max Pulse</p>
+                                <p class="">Black</p>
+                                <p class=""><span>&#8377</span>8299</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="best-selling col-lg-3 col-md-3 col-6 px-3">
+                        <div class="best-seller position-relative">
+                            <a href="" class="wishlist-fvrte-btn"><i class="bi bi-heart"></i></a>
+                            <img src="images/best_selling_image.jpeg" alt="">
+                            <div class="best-seller-btn">
+                                <p class="">Nike</p>
+                                <p class="">Nike Air Max Pulse</p>
+                                <p class="">Black</p>
+                                <p class=""><span>&#8377</span>8299</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="best-selling col-lg-3 col-md-3 col-6 px-3">
+                        <div class="best-seller position-relative">
+                            <a href="" class="wishlist-fvrte-btn"><i class="bi bi-heart"></i></a>
+                            <img src="images/best_selling_image.jpeg" alt="">
+                            <div class="best-seller-btn">
+                                <p class="">Nike</p>
+                                <p class="">Nike Air Max Pulse</p>
+                                <p class="">Black</p>
+                                <p class=""><span>&#8377</span>8299</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section> -->
+
+
+<!-- best selling section end -->
+
+
+
+
+
+
+        <!-- Shop By Brands section start -->
+
+            <!-- Slider -->
+            <section class="bg-light p-md-2 p-0">
+                <h3 class="text-center">SHOP BY BRNADS</h3>
+                
+              <div class="container position-relative">
+                <!-- Cards Wrap -->
+                <div class="slider d-flex align-items-center justify-content-start overflow-hidden position-relative">
+                    <div class="slider-wrap d-flex align-items-center position-absolute">
+                        <div class="slide-card 1 position-relative bg-white overflow-hidden shadow-sm mx-2">
+                            <a href="#" class="text-decoration-none">
+                                <div class="slider-image">
+                                    <img src="images/brand_logos/adidas_logo.png" alt="slide" width="100%">
+                                </div>
+                            </a>
+                        </div>
+                        <div class="slide-card 2 position-relative bg-white overflow-hidden shadow-sm mx-2">
+                            <div class="slider-image">
+                                <img src="images/brand_logos/fila_logo.png" alt="slide" width="100%">
+                            </div>
+                        </div>
+                        <div class="slide-card 3 position-relative bg-white overflow-hidden shadow-sm mx-2">
+                            <div class="slider-image">
+                                <img src="images/brand_logos/vans_logo.png" alt="slide" width="100%">
+                            </div>
+                        </div>
+                        <div class="slide-card 4 position-relative bg-white overflow-hidden shadow-sm mx-2">
+                            <div class="slider-image">
+                                <img src="images/brand_logos/nike_logo.png" alt="slide" width="100%">
+                            </div>
+                        </div>
+                        <div class="slide-card 5 position-relative bg-white overflow-hidden shadow-sm mx-2">
+                            <a href="#" class="text-decoration-none">
+                                <div class="slider-image">
+                                    <img src="images/brand_logos/puma_logo.png" alt="slide" width="100%">
+                                </div>
+                            </a>
+                        </div>
+                        <div class="slide-card 6 position-relative bg-white overflow-hidden shadow-sm mx-2">
+                            <div class="slider-image">
+                                <img src="images/brand_logos/under_Armour_logo.png" alt="slide" width="100%">
+                            </div>
+                        </div>
+                        <div class="slide-card 7 position-relative bg-white overflow-hidden shadow-sm mx-2">
+                            <div class="slider-image">
+                                <img src="images/brand_logos/new_Balance_logo.png" alt="slide" width="100%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slider Arrows -->
+                <!-- Previous Arrow -->
+                <button
+                    class="text-dark arrow bg-white d-flex align-items-center justify-content-center shadow-lg border rounded-circle position-absolute bottom-50 start-0"
+                    id="previous-arrow" onclick="previousSlide()">
+                    <div>
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    </div>
+                </button>
+                <!-- Next Arrow -->
+                <button
+                    class="text-dark arrow bg-white d-flex align-items-center justify-content-center shadow-lg border rounded-circle position-absolute bottom-50 end-0"
+                    id="next-arrow" onclick="nextSlide()">
+                    <div>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </button>
+            </div>
+            </section>
+
+        
+
+
+
+
+
+
+
+        <script>
+            // add active class by default
+document.querySelectorAll(".slide-card")[0].classList.add("active");
+// disable and style disabled back button
+document.querySelector("#previous-arrow").setAttribute("disabled", " ");
+document.querySelector("#previous-arrow i").style.color = "#c5c5c5";
+document.querySelector("#previous-arrow").classList.replace("bg-white", "bg-disabled");
+// calculate number of slides
+let count = document.querySelectorAll(".slide-card").length;
+
+
+// move to next slide
+function nextSlide() {
+    // enable and style the back button
+    document.querySelector("#previous-arrow").removeAttribute("disabled");
+    document.querySelector("#previous-arrow i").style.color = "#212529";
+    document.querySelector("#previous-arrow").classList.replace("bg-disabled", "bg-white");
+    const elements = document.querySelectorAll('.slide-card');
+    for (let index = 0; index <= count; index++) {
+        let valueIndex = null;
+        if (elements[index].classList.contains('active')) {
+            valueIndex = index;
+        }
+        if (valueIndex == 0) {
+            setTimeout(() => {
+                previousSlide();
+            }, 560);
+        }
+        // set animations
+        elements[index].classList.remove('move-left');
+        elements[elements.length - 1].classList.remove('move-left');
+        setTimeout(() => {
+            elements[index].classList.add('move-left');
+        }, 0);
+        setTimeout(() => {
+            elements[index].classList.remove('active');
+            elements[2].classList.add('active');
+            elements[index].classList.remove('move-left');
+            elements[elements.length - 1].classList.remove('move-left');
+            document.querySelector('.slider-wrap').append(elements[0]);
+        }, 500);
+    }
+};
+
+
+// previous slide
+function previousSlide() {
+    const elements = document.querySelectorAll('.slide-card');
+    // animate the slider wrapper
+    document.querySelector('.slider-wrap').classList.add('slider-move-left');
+    for (let index = 0; index <= count; index++) {
+        // set animations
+        setTimeout(() => {
+            elements[index].classList.add('move-right');
+        }, 0);
+        setTimeout(() => {
+            elements[index].classList.remove('active');
+            elements[0].classList.add('active');
+            elements[index].classList.remove('move-right');
+            document.querySelector('.slider-wrap').prepend(elements[elements.length - 1]);
+        }, 500);
+    }
+}
+        </script>
+
+<!-- Shop By Brands section end -->
+
+
+
+
+
+
+
+
+<!-- All products section start -->
+
+<div class="all-products-header"  style="margin: 100px 0; margin-bottom: 0;">
+    <div class="container header-mark my-5 py-4 d-flex justify-content-start align-items-center">
+        <span></span>
+        <h2 class="mb-0 ms-2">All Products</h2>
+    </div>
+</div>
+<section  style="margin: 100px 0; margin-top: 0;">
+    <div class="container">
+        <div class="row">
+            <% productData.slice(0, 4).forEach(data => { %>
+                <div class="all-products best col-lg-3 col-md-3 col-6 px-3">
+                    <div class="product position-relative p-0">
+                        <!-- <a href="#" class="wishlist-fvrte-btn"><i class="bi bi-heart"></i></a> -->
+                        <a href="/productdetails/<%= data.id %>" class="text-decoration-none text-dark">
+                            <img src="/productImages/<%= data.images[0] %>" class="image-fluid" height="250px" width="100%" alt="">
+                        <div class="product-btn">
+                            <!-- <a href=""><i class="bi bi-cart3"></i>Add To Cart</a> -->
+                            <p class=""><%= data.brand %></p>
+                            <p class="text-truncate"><%= data.name %></p>
+                            <p class=""><%= data.color %></p>
+                            <p class="">MRP: <%= data.price %><span>&#8377</span></p>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            <% }) %>
+            
+        </div>
+    </div>
+    <div class="viewAllBtn my-5 text-center ">
+        <a href="/allproducts" class="btn btn-success">View All</a>
+    </div>
+</section>
+
+
+
+
+<style>
+    /* All products css start */
+
+    .product-header{
+        background-color: #ededed;
+    }
+    .product{
+        box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.2);
+        border-radius: 5px;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+    .product:hover{
+        transform: scale(1.03);
+    }
+    .product img{
+        width: 100%;
+        border-radius: 5px 5px 0px 0px;
+    }
+    .wishlist-fvrte-btn{
+        text-decoration: none;
+        color: #11101b;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
+    .product i{
+        font-weight: 600;
+        font-size: 20px;
+    }
+    .product-btn{
+        padding: 10px;
+        border-radius: 0px 0px 5px 5px;
+    }
+    .product-btn p{
+        font-weight: 600;
+        font-size: 16px;
+    }
+    /* .best-seller-btn span{
+        font-family: Arial, Helvetica, sans-serif;
+    } */
+    .product-btn p:nth-child(1), .product-btn p:nth-child(3){
+        color: #979797;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .product-btn i{
+        font-size: 24px;
+        margin-right: 5px;
+    }
+    .header-mark span{
+        background-color: #B05574;
+        padding: 20px 4px;
+        border-radius: 50px;
+    }
+    @media (max-width: 768px){
+                .product{
+                    margin-top: 40px;
+                    padding: 0px 15px;
+                }
+            }
+    @media (max-width: 576px){
+                .product{
+                    margin-top: 40px;
+                    padding: 0px 15px;
+                }
+            }
+
+            /* All products css end */
+</style>
+
+
+
+
+<!-- All products section end -->
+
+
+
+
+
+
+
+
+
+
+        <!-- video section start -->
+
+        <section style="margin: 100px 0;">
+            <div class="container-fluid p-0 vh-25">
+                <video src="video/Nike Running - Spec Ad 720p.mp4" class="w-100" autoplay muted loop></video>
+            </div>
+        </section>
+        
+        <!-- video section end -->
+
+
+
+
+
+<!-- New arrival section start -->
+<div class="all-products-header" style="margin: 100px 0; margin-bottom: 0;">
+    <div class="container header-mark my-5 py-4 d-flex justify-content-start align-items-center">
+        <span></span>
+        <h2 class="mb-0 ms-2">New Arrival</h2>
+    </div>
+</div>
+<section style="margin: 100px 0; margin-top: 0;">
+    <div class="container">
+        <div class="row">
+            <% productData.slice(-4).forEach(data => { %>
+                <div class="all-products best col-lg-3 col-md-3 col-6 px-3">
+                    <div class="product position-relative p-0">
+                        <a href="#" class="wishlist-fvrte-btn"><i class="bi bi-heart"></i></a>
+                        <a href="/productdetails/<%= data.id %>" class="text-decoration-none text-dark">
+                            <img src="/productImages/<%= data.images[0] %>" class="image-fluid" height="250px" width="100%" alt="">
+                            <div class="product-btn">
+                                <!-- <a href=""><i class="bi bi-cart3"></i>Add To Cart</a> -->
+                                <p class=""><%= data.brand %></p>
+                                <p class="text-truncate"><%= data.name %></p>
+                                <p class=""><%= data.color %></p>
+                                <p class="">MRP: <%= data.price %><span>&#8377</span></p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            <% }) %>
+
+        </div>
+    </div>
+    <div class="viewAllBtn my-5 text-center ">
+        <a href="/allproducts" class="btn btn-success">View All</a>
+    </div>
+</section>
+
+
+
+
+<!-- New arrival section end -->
+
+
+
+
+
+
+
+<!-- footer section start -->
+
+    <footer class="bg-dark mt-5 py-3">
+        <div class="container my-5">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    <div class="quick-links mt-5">
+                        <a href=""><h6>Find a store</h6></a>
+                        <a href=""><h6>Sign up for email</h6></a>
+                        <a href=""><h6>Become a member</h6></a>
+                        <a href=""><h6>Student discount</h6></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    <div class="services">
+                        <h6>SERVICES</h6>
+                        <ul>
+                            <li><a href="">Careers</a></li>
+                            <li><a href="">Store finder</a></li>
+                            <li><a href="">Account</a></li>
+                            <li><a href="">Contact us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    <div class="find-store">
+                        <h6>FIND A STORE</h6>
+                        <ul>
+                            <li><a href="">Order status</a></li>
+                            <li><a href="">Delivery</a></li>
+                            <li><a href="">Returns</a></li>
+                            <li><a href="">Payment options</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    <div class="social-media">
+                        <h6>LET'S CONNECT</h6>
+                        <ul>
+                            <li><a href="">facebook <span><i class="bi bi-facebook"></i></span></a></li>
+                            <li><a href="">Twitter <span><i class="bi bi-twitter-x"></i></span></a></li>
+                            <li><a href="">Youtube <span><i class="bi bi-youtube"></i></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+<!-- footer section end -->
+
+
+<!--Start of Tawk.to Script-->
+<!-- <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/66210cd91ec1082f04e409f4/1hrohkcqt';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script> -->
+    <!--End of Tawk.to Script-->
+
+
+
+
+        
+
+
+ 
+
+
+
+<%-include('./userPartials/footer')%>

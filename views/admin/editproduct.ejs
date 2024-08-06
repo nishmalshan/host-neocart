@@ -1,0 +1,405 @@
+<%-include('./adminPartials/header')%>
+
+
+
+
+<div class="container d-flex justify-content-center align-items-center h-100">
+    <div class="category-add w-100 rounded shadow p-3 my-5 bg-body rounded border border-dark-subtle">
+        <div class="p-4">
+            <h2 class="mb-5 fw-bold text-center">Edit Product</h2>
+            <form action="/admin/edit-product/<%= productData.id %>" method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-2">
+                        <label class="fw-bold mb-2" for="productName">Product Name</label>
+                        <input class="form-control w-75 px-1 py-2 border rounded-2" type="text" value="<%= productData.name %>" name="name" id="productName" placeholder="Enter Product name" required>
+                        <p id="productNameError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-2">
+                        <label class="fw-bold mb-2" for="productDescription">Product Description</label>
+                        <textarea class="form-control w-75 px-1 py-2 border rounded-2" id="productDescription" name="description" placeholder="Product description" rows="3" required><%= productData.description %></textarea>
+                        <p id="productDescriptionError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-2">
+                        <label class="fw-bold mb-2" for="productBrand">Brand Name</label>
+                        <input class="form-control w-75 px-1 py-2 border rounded-2" type="text" name="brand" value="<%= productData.brand %>" id="brandName" placeholder="Enter brand name" required>
+                        <p id="brandNameError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-2">
+                        <label class="fw-bold mb-2" for="productCategory">Category</label>
+                        <select class="form-select w-auto" name="category" id="categorySelect" required>
+                          <option value="ALL">All Categories</option>
+                          <% productCategory.forEach(category => { %>
+                              <option value="<%= category %>"><%= category %></option>
+                          <% }) %>
+                      </select>
+                        <p id="categoryNameError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-2">
+                        <label class="fw-bold mb-2" for="productColor">Color</label>
+                        <input class="form-control w-75 px-1 py-2 border rounded-2" type="text" name="color" value="<%= productData.color %>" id="productColor" required>
+                        <p id="colorError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-2">
+                        <label class="fw-bold mb-2" for="productPrice">Price</label>
+                        <input class="form-control w-75 px-1 py-2 border rounded-2" type="number" name="price" value="<%= productData.price %>" id="productPrice" placeholder="Enter price" required>
+                        <p id="priceError" class="text-danger mb-3" style="font-size: 13px;"></p>
+                    </div>
+                </div> <!-- row end -->
+
+                <!-- Variant section -->
+                <div class="col-lg-6 col-md-6 col-sm-6 my-3">
+                    <!-- Add Variant Button -->
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary" id="addVariant">Add Variant</button>
+                    </div>
+                    <p style="color: rgb(252, 56, 56); text-align: center;" id="variantError"></p>
+
+                    <div id="variantSection" class="rounded border border-dark-subtle p-3 me-5">
+                        <% productData.variant.forEach((variant, index) => { %>
+                        <!-- Variant Template -->
+                        <div class="variant-row row mb-4" data-variant-index="<%= index %>">
+                            <!-- Remove Variant Icon -->
+                            <div class="col-md-12 mt-2 d-flex justify-content-end">
+                                <button type="button" onclick="removeVariant(this)" class="btn btn-danger px-2 py-1"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productSize" class="form-label fw-bold mb-2">Size</label>
+                                <input type="number" class="form-control w-75 px-1 py-2 border rounded-2" value="<%= variant.size %>" name="variant[size][]" placeholder="Size">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productStock" class="form-label fw-bold mb-2">Stock Quantity</label>
+                                <input type="number" class="form-control w-75 px-1 py-2 border rounded-2" value="<%= variant.quantity %>" name="variant[quantity][]" placeholder="Stock" required>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+
+                <!-- Image Upload Section -->
+                <div class="row mb-4">
+                  <% for(let i = 0; i < productData.images.length; i++) { %>
+                  <div class="col-lg-6 col-md-6 col-sm-6 p-2">
+                      <label for="imageInput<%= i + 1 %>" class="form-label fw-bold mb-2">Image <%= i + 1 %></label>
+                      <input type="file" class="form-control w-75" id="imageInput<%= i + 1 %>" name="image<%= i + 1 %>" accept="image/*">
+                      <img id="imagePreview<%= i + 1 %>" src="/productImages/<%= productData.images[i] %>" class="img-thumbnail mt-2" alt="Preview" style="width: 150px; height: 150px;">
+                  </div>
+                  <% } %>
+              </div>
+              
+
+                <div class="buttons mt-2">
+                    <button id="submitButton" type="submit" class="btn btn-success">Save changes</button>
+                    <a href="/admin/product-manage"><button type="button" class="btn btn-outline-dark">Cancel</button></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const fileName = this.files[0]?.name;
+            const smallText = this.nextElementSibling;
+            if (fileName) {
+                smallText.textContent = 'Selected image: ' + fileName;
+            }
+        });
+    });
+
+    function removeVariant(button) {
+        const variantRow = button.closest('.variant-row');
+        variantRow.remove();
+    }
+
+    document.getElementById('addVariant').addEventListener('click', () => {
+        const variantSection = document.getElementById('variantSection');
+        const variantIndex = variantSection.querySelectorAll('.variant-row').length;
+        
+        const newVariant = document.createElement('div');
+        newVariant.className = 'variant-row row mb-4';
+        newVariant.dataset.variantIndex = variantIndex;
+        newVariant.innerHTML = `
+            <div class="col-md-12 mt-2 d-flex justify-content-end">
+                <button type="button" onclick="removeVariant(this)" class="btn btn-danger px-2 py-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="col-md-6">
+                <label for="productSize" class="form-label fw-bold mb-2">Size</label>
+                <input type="number" class="form-control w-75 px-1 py-2 border rounded-2" name="variant[size][]" placeholder="Size">
+            </div>
+            <div class="col-md-6">
+                <label for="productStock" class="form-label fw-bold mb-2">Stock Quantity</label>
+                <input type="number" class="form-control w-75 px-1 py-2 border rounded-2" name="variant[quantity][]" placeholder="Stock" required>
+            </div>
+        `;
+        variantSection.appendChild(newVariant);
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Edit product form validation -->
+
+    <script>
+
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('productName').addEventListener('input',validateForm)
+        document.getElementById('productDescription').addEventListener('input',validateForm)
+        document.getElementById('brandName').addEventListener('input',validateForm)
+        // document.getElementById('productCategory').addEventListener('input',validateForm)
+        document.getElementById('productColor').addEventListener('input',validateForm)
+        document.getElementById('productPrice').addEventListener('input',validateForm)
+      })
+
+
+
+      // form validation function
+
+      function validateForm() {
+        var productName = document.getElementById('productName').value.trim()
+        var productDescription = document.getElementById('productDescription').value.trim()
+        var brandName = document.getElementById('brandName').value.trim()
+        var productCategory = document.getElementById('categorySelect').value.trim()
+        var productColor = document.getElementById('productColor').value.trim()
+        var productPrice = document.getElementById('productPrice').value.trim()
+
+        var submitButton = document.getElementById('submitButton')
+
+        if(productName === '') {
+          document.getElementById('productNameError').innerHTML= "Product name is required"
+          submitButton.disabled = true;
+        }else{
+          document.getElementById('productNameError').innerHTML = "";
+          submitButton.disabled = false;
+        }
+
+        if(productDescription === '') {
+          document.getElementById('productDescriptionError').innerHTML = "Description is required"
+          submitButton.disabled = true;
+        }else{
+          document.getElementById('productDescriptionError').innerHTML = "";
+          submitButton.disabled = false;
+        }
+
+        if(brandName === '') {
+          document.getElementById('brandNameError').innerHTML = "Brand name is required"
+          submitButton.disabled = true;
+        }else{
+          document.getElementById('brandNameError').innerHTML = "";
+          submitButton.disabled = false;
+        }
+
+        if (productCategory === '') {
+          document.getElementById('categoryNameError').innerHTML = "Category is required"
+          submitButton.disabled = true;
+        }else{
+          document.getElementById('categoryNameError').innerHTML = "";
+          submitButton.disabled = false;
+        }
+
+        if (productColor === '') {
+          document.getElementById('colorError').innerHTML = "Color is required"
+          submitButton.disabled = true;
+        }else{
+          document.getElementById('colorError').innerHTML = "";
+          submitButton.disabled = false;
+        }
+
+        if (productPrice === '' || parseFloat(productPrice) < 0) {
+          document.getElementById('priceError').innerHTML = "Price must be a non-negative number"
+          submitButton.disabled = true;
+        }else{
+          document.getElementById('priceError').innerHTML = "";
+          submitButton.disabled = false;
+        }
+
+      }
+
+      
+    </script>
+
+
+
+
+
+
+ <!-- Edit product variant section script -->
+
+ <script>
+
+document.getElementById('addVariant').addEventListener('click', function () {
+    var variantSection = document.getElementById('variantSection');
+    var template = document.querySelector('.variant-row'); // Use the existing variant row as a template
+    
+    // Clone the template
+    var newVariantSection = template.cloneNode(true);
+  
+    // Update index and remove 'disabled' attribute
+    var index = variantSection.querySelectorAll('.variant-row').length;
+    newVariantSection.setAttribute('data-variant-index', index);
+    newVariantSection.querySelector('button').removeAttribute('disabled');
+  
+    // Clear input values in the cloned variant
+    newVariantSection.querySelectorAll('input').forEach(input => {
+        input.value = '';
+    });
+
+    // Add event listener to the close button in the cloned variant
+    newVariantSection.querySelector('button').addEventListener('click', function () {
+        removeVariant(this);
+    });
+
+    // Append the new variant to the variantSection
+    variantSection.appendChild(newVariantSection);
+});
+
+function removeVariant(button) {
+    var variantSection = document.getElementById('variantSection');
+    
+    // Ensure there is at least one variant before removing
+    if (variantSection.querySelectorAll('.variant-row').length > 1) {
+        button.closest('.variant-row').remove();
+    }
+}
+
+
+ </script>
+
+
+
+
+
+
+
+
+<!-- Edit product image file type validation -->
+
+<script>
+
+function validateImages () {
+
+  var isValidMainImage = validateImage('imageInput1','image1Error');
+  var isValidProductImage1 = validateImage('imageInput2','image2Error');
+  var isValidProductImage2 = validateImage('imageInput3','image3Error');
+  var isValidProductImage3 = validateImage('imageInput4','image4Error');
+  var isValidProductImage4 = validateImage('imageInput5','image5Error');
+
+  // Return true only if all images are valid
+  return isValidMainImage && isValidProductImage1 && isValidProductImage2 && isValidProductImage3 && isValidProductImage4;
+
+}
+
+
+
+function validateImage (inputId,errorId) {
+
+  var imageInput = document.getElementById(inputId);
+  var errorMessage = document.getElementById(errorId);
+
+  // Regex for supported file types
+  var regex = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+  var filePath = imageInput.value;
+
+  // Reset error message
+  errorMessage.textContent = '';
+
+
+   // Skip validation if the image input is empty
+   if (filePath === '') {
+        return true;
+    }
+      
+  
+  if (!regex.exec(filePath)) {
+    errorMessage.textContent = "Please add a valid image with supported formats (JPG, JPEG, PNG, GIF)";
+    imageInput.value = '';
+    return false;
+  }
+
+  return true; // If the image is valid
+
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+<!-- image preview script -->
+<!-- when we add images in the input field it will show as a preview under the input -->
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const inputIds = ["1", "2", "3", "4", "5"];
+
+    inputIds.forEach((id) => {
+      const input = document.getElementById(`imageInput${id}`);
+      const preview = document.getElementById(`imagePreview${id}`);
+      const deleteButton = document.getElementById(`deleteButton${id}`);
+      const imageErrorMessage = document.getElementById(`imageError${id}`);
+
+      input.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          if (!file.type.startsWith("image/")) {
+            input.value = "";
+            preview.src = "";
+            deleteButton.style.display = "none";
+            imageErrorMessage.textContent = 'Please add a valid image with supported formats (JPEG, PNG, WebP, GIF, SVG, TIFF, AVIF)';
+          } else if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/tiff', 'image/avif'].includes(file.type)) {
+            input.value = "";
+            preview.src = "";
+            deleteButton.style.display = "none";
+            imageErrorMessage.textContent = 'Please add a valid image with supported formats (JPEG, PNG, WebP, GIF, SVG, TIFF, AVIF).';
+          } else {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              preview.src = event.target.result;
+              deleteButton.style.display = "block";
+              imageErrorMessage.textContent = '';
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+      });
+
+      deleteButton.addEventListener("click", () => {
+        input.value = "";
+        preview.src = "";
+        deleteButton.style.display = "none";
+        imageErrorMessage.textContent = '';
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <%-include('./adminPartials/footer')%>

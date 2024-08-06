@@ -1,0 +1,523 @@
+<%-include('./userPartials/header')%>
+
+
+
+    <%-include('./userPartials/navbar')%>
+
+    <link rel="stylesheet" type="text/css" href="/user_css/homePage.css">
+
+    <!-- crop image ajax cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
+
+
+    <style>
+      /* Add your custom CSS styles here */
+      #cropperContainer {
+        width: 400px;
+        height: 300px;
+        margin: 20px auto;
+      }
+      #croppedImage {
+        display: block;
+        margin: 20px auto;
+        max-width: 100%;
+      }
+      .modal {
+        display: none;
+      }
+      
+      .profile-list{
+        transition: all 0.3s;
+      }
+      .profile-list-ul a:hover .profile-list{
+        background-color: #ebebeb;
+      }
+    </style>
+
+
+
+<!-- Bootstrap modal for image cropping -->
+
+<div id="cropModal" class="modal">
+  <div class="container text-center bg-white p-3 rounded-3">
+    <div id="cropperContainer"></div>
+  <button class="btn btn-danger" onclick="closeCropModal()">Cancel</button>
+  <button class="btn btn-success" onclick="cropImage()">Save Cropped Image</button>
+  </div>
+</div>
+
+
+<!-- Bootstrap modal for image cropping -->
+
+
+
+
+
+
+    <!-- Bootstrap modal for name field start -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit name</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input  id="name" name="name" value="<%= User.name %>" type="text" class="form-control" placeholder="enter your name"/>
+        <p id="nameError" class="text-danger mb-3" style="font-size: 13px;"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" id="submitButton" data-bs-dismiss="modal" onclick="updateUserName()" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Bootstrap modal for name field end -->
+
+
+
+    <!------------------------------------------change password modal --------------------------------------------------------------------->
+
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="passwordModal">Change Password</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="password-form">
+            <div class="mb-3">
+              <label for="old-password" class="col-form-label">Old Password:</label>
+              <input type="password" class="form-control" id="oldPassword" placeholder="Current password">
+            </div>
+            <div class="mb-3">
+              <label for="new-password" class="col-form-label">New Password:</label>
+              <input type="password" class="form-control" id="newPassword" placeholder="New password">
+            </div>
+            <div class="mb-3">
+              <label for="confirm-password" class="col-form-label">Confirm Password:</label>
+              <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password">
+            </div>
+            <div id="passwordWarning" style="color: red; font-size: 13px;"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!------------------------------------------change password modal end --------------------------------------------------------------------->
+
+<section style="background-color: #f7f7f7;">
+  <div class="container pt-4">
+    <div class="main-body">
+    
+          <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center">
+                    <div class="profile-img position-relative">
+                      <input type="file" style="display: none;" id="imageInput" name="profileImage" onchange="handleImageUpload(event)">
+                      <button style="background-color: #007bff; color: #fff; width: 35px; height: 35px; border-radius: 50px; padding: 1px; border: none; position: absolute; top: 0; right: 0; font-size: 20px;" onclick="openCropModal()"><i class="bi bi-pencil-square"></i></button>
+                      <!-- <button class="btn" style="color: #007bff; position: absolute; top: 0;"><i class="bi bi-pencil-square"></i></button> -->
+                      <% if (User.profilePhoto) { %>
+                        <div class="proImage rounded-circle border border-secondary-subtle shadow-sm bg-body rounded" style="width: 120px; height: 120px; overflow: hidden; margin: auto;">
+                          <img src='/userImage/<%= User.profilePhoto %>' alt="Admin" class="rounded-circle" width="100%">
+                        </div>
+                       <% } else { %>
+                        
+                        <div class="proImage rounded-circle border border-secondary-subtle" style="width: 120px; height: 120px; overflow: hidden; margin: auto; padding: 10px;">
+                          <img src="https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png" alt="Admin" class="" width="100%">
+                        </div>
+                      <% } %>
+
+                      
+
+                    </div>
+                    <div class="mt-3">
+                      <h4><%= User.name %></h4>
+                      <p class="text-secondary mb-1" style="font-size: 15px;"><%= User.email %></p>
+                      <!-- <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card mt-3">
+                <ul class="profile-list-ul p-0 mb-0 list-group-flush">
+                  <a href="/order-List" class="text-decoration-none"><li class="profile-list list-group-item d-flex justify-content-start align-items-center flex-wrap">
+                    <i class="fa-solid fa-box-open" style="color: #FFD43B;"></i>
+                    <h6 class="mb-0 ms-3">My Order</h6>
+                  </li></a> <hr class="m-0 text-center m-auto" width="90%">
+                  <a href="/add-to-Cart" class="text-decoration-none"><li class="profile-list list-group-item d-flex justify-content-start align-items-center flex-wrap">
+                    <i class="fa-solid fa-cart-shopping" style="color: #8861ff;"></i>
+                    <h6 class="mb-0 ms-3">My Cart</h6>
+                  </li></a> <hr class="m-0 text-center m-auto" width="90%">
+                  <a href="/coupons" class="text-decoration-none"><li class="profile-list list-group-item d-flex justify-content-start align-items-center flex-wrap">
+                    <i class="fa-solid fa-ticket" style="color: #d10000;"></i>
+                    <h6 class="mb-0 ms-3">Coupons</h6>
+                  </li></a> <hr class="m-0 text-center m-auto" width="90%">
+                  <a href="/manageAddress" class="text-decoration-none"><li class="profile-list list-group-item d-flex justify-content-start align-items-center flex-wrap">
+                    <i class="fa-solid fa-address-book" style="color: #00046b;"></i>
+                    <h6 class="mb-0 ms-3">Manage Address</h6>
+                  </li></a> <hr class="m-0 text-center m-auto" width="90%">
+                  <a href="#" class="text-decoration-none"><li class="profile-list list-group-item d-flex justify-content-start align-items-center flex-wrap">
+                    <i class="fa-solid fa-wallet"></i>
+                    <h6 class="mb-0 ms-3">Wallet</h6>
+                  </li></a> <hr class="m-0 text-center m-auto" width="90%">
+                  <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#passwordModal" data-bs-whatever="@getbootstrap"><li class="profile-list list-group-item d-flex justify-content-start align-items-center flex-wrap">
+                    <i class="fa-solid fa-key" style="color: #0025db;"></i>
+                    <h6 class="mb-0 ms-3">Change password</h6>
+                  </li></a>
+                </ul>
+              </div>
+            </div>
+
+
+            <div class="col-md-8">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Full Name</h6>
+                    </div>
+                    <div class="col-sm-7 text-secondary">
+                      <%= User.name %>
+                    </div>
+                    <div class="col-sm-2">
+                      <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</a>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Email</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      <%= User.email %>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Mobile</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      +91 <%= User.mobile %>
+                    </div>
+                  </div>
+                  <% if (User.address && User.address.length > 0) { %>
+                    <hr>
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <h6 class="mb-0">Address</h6>
+                      </div>
+                      <div class="col-sm-7 text-secondary">
+                        <%= User.address[0].address %>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+              <!-- Wallet section -->
+              <h5>Wallet</h5>
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <% if (User.wallet) { %>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Balance Amount</h6>
+                        </div>
+                        <div class="col-sm-6 text-secondary text-success">
+                          <%= User.wallet.balanceAmount.toLocaleString('en-US') %><span>&#8377</span>
+                        </div>
+                        <div class="col-sm-3">
+                          <a href="/user-wallet" class="text-primary text-decoration-none">View history</a>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                </div>
+                <!-- Referral Code Section -->
+        <div class="col-md-6">
+          <label for="referralCode" class="fw-bold">Referral Code:</label>
+          <div class="input-group">
+              <input type="text" class="form-control" id="referralCode" value="<%= User.referralCode %>" readonly>
+              <div class="input-group-append">
+                  <button class="btn btn-outline-secondary copy-button" type="button" onclick="copyReferralCode()"><i class="bi bi-clipboard text-dark"></i></button>
+              </div>
+          </div>
+      </div>
+            </div>
+      
+          </div>
+
+        </div>
+    </div>
+</section>
+
+    <style>
+      .success-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  animation: fadeOut 3s ease-in-out;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+
+    </style>
+
+
+
+
+<!-- Add jQuery and Bootstrap JS for functionality -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function generateReferralCode() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let referralCode = '';
+        for (let i = 0; i < 8; i++) {
+            referralCode += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return referralCode;
+    }
+
+    function copyReferralCode() {
+        // Get the referral code input element
+        var referralCodeInput = document.getElementById('referralCode');
+        // Select the text in the input element
+        referralCodeInput.select();
+        referralCodeInput.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the input element
+        document.execCommand('copy');
+
+        // Alert the copied text
+        alert('Referral code copied: ' + referralCodeInput.value);
+    }
+
+</script>
+
+
+
+
+
+
+
+
+<!-- user name edit field validation & fetch method for user name edit -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('name').addEventListener('input', validateForm)
+      })
+
+      function validateForm() {
+        let nameFieldInput = document.getElementById('name').value.trim()
+        let submitButton = document.getElementById('submitButton')
+        let nameError = document.getElementById('nameError')
+
+        if (nameFieldInput === '') {
+          nameError.textContent = "Name field can't be empty"
+          submitButton.disabled = true;
+        } else {
+          nameError.textContent = '';
+          submitButton.disabled = false;
+        }
+      }
+
+
+
+
+  async function updateUserName() {
+    const newName = document.getElementById('name').value.trim();
+    const response = await fetch('/updateUserName', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({newName})
+    })
+    .then(response => response)
+    .then(data => {
+      if (data.ok) {
+
+        
+        const successMessage = document.createElement('div');
+        successMessage.classList.add('success-message');
+        successMessage.textContent = 'User name updated successfully';
+        document.body.appendChild(successMessage);
+        setTimeout(() => {
+          window.location.reload()
+          successMessage.remove();
+        }, 3000);
+      }
+    })
+  }
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
+  <script>
+    let cropper;
+
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const image = document.createElement('img');
+        image.src = e.target.result;
+        image.id = 'croppedImage';
+        const cropperContainer = document.getElementById('cropperContainer');
+        cropperContainer.innerHTML = '';
+        cropperContainer.appendChild(image);
+
+        cropper = new Cropper(image, {
+          aspectRatio: 1, // You can set the aspect ratio as per your requirement
+          viewMode: 2,
+        });
+        const modal = document.getElementById('cropModal');
+        modal.style.display = 'block';
+        modal.style.backgroundColor = '#00000091'
+      }
+
+      reader.readAsDataURL(file);
+    }
+    function openCropModal() {
+      const fileInput = document.getElementById('imageInput');
+      fileInput.click(); // Trigger file input click to open file selection dialog
+    }
+    function cropImage() {
+  const canvas = cropper.getCroppedCanvas();
+  canvas.toBlob(function(blob) {
+    const formData = new FormData();
+    formData.append('imageData', blob); // Ensure the field name matches the backend
+
+    // Send cropped image data to backend
+    fetch('/edit-profileImage', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.reload();
+
+        return response.json();
+      }
+      throw new Error('Failed to upload image');
+    })
+    .then(data => {
+      console.log('Image uploaded successfully:', data);
+
+    })
+    .catch(error => {
+      console.error('Error uploading image:', error);
+      // Optionally, show error message or handle error
+    });
+  }, 'image/jpeg'); // Specify the desired image format
+}
+
+
+
+
+    function closeCropModal() {
+      const modal = document.getElementById('cropModal');
+      modal.style.display = 'none';
+    }
+  </script>
+
+
+
+
+<!-- function for change password -->
+
+<script>
+  function changePassword() {
+    const oldPassword = document.getElementById('oldPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const passwordError = document.getElementById('passwordWarning')
+
+    if (!oldPassword) {
+      passwordError.textContent = "Old password is required";
+    } else if (!newPassword) {
+      passwordError.textContent = "New password is required"
+    } else if (!confirmPassword) {
+      passwordError.textContent = "Confirm password is required";
+    } else if (newPassword !== confirmPassword) {
+      passwordError.textContent = "Passwords do not match";
+    } else if (newPassword.length < 8 || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(newPassword)) {
+      passwordError.textContent = "Password should contain at least one uppercase letter, one lowercase letter, a special character (@#$%^&+=!), and a number. Password length should be between 8 and 20 characters.";
+    } else {
+
+      const data = {
+        oldPassword: oldPassword,
+        newPassword: newPassword
+      };
+
+
+      fetch('/change-Password', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(response => {
+        if (response.success) {
+
+          window.location.reload()
+        }
+      })
+      .catch(error => {
+        console.error(error)
+      })
+    }
+  }
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+    <%-include('./userPartials/footer')%>

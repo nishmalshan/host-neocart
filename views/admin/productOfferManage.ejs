@@ -1,0 +1,244 @@
+<%-include('./adminPartials/sidebar')%> 
+        
+
+
+
+<div class="container my-5" style="width: 78%;">
+    <div class="position-relative">
+        <h3 class="mb-5 fw-bold">Product Offer Management</h3>
+
+        <!-- Add a div for the pop-up message -->
+        <p id="popup-message" class="popup-message"></p>
+
+        <% if (productsData) { %>
+            <div>
+                <div class="table-responsive rounded-3">
+                    <table id="usersTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr class="bg-dark text-white">
+                                <th>No</th>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Discount in %</th>
+                                <th>Start Date</th>
+                                <th>Expiry Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% productsData.forEach((product, index) => { %>
+                                <% 
+                                    const discount = offerData.find(offer => offer.product.toString() === product._id.toString());
+                                    const discountPercentage = discount ? discount.discountPrecentage : 0;
+                                    const startDate = discount ? new Date(discount.startDate).toISOString().substring(0, 10) : '';
+                                    const endDate = discount ? new Date(discount.expiryDate).toISOString().substring(0, 10) : '';
+                                %>
+                                
+                                <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td><img width="60px" height="60px" class="img-fluid" src="/productImages/<%= product.images[0] %>" alt="Product Image"></td>
+                                    <td><%= product.name %></td>
+                                    <td><input type="number" class="discount-input" value="<%= discountPercentage %>" min="0" max="99" placeholder="0" data-index="<%= index %>"></td>
+                                    <td><input type="date" class="start-date-input" value="<%= startDate %>" data-index="<%= index %>"></td>
+                                    <td><input type="date" class="end-date-input" value="<%= endDate %>" data-index="<%= index %>"></td>
+                                    <td class="text-center" style="width: 10rem;">
+                                        <button type="button" class="btn btn-success text-center update-btn" data-index="<%= index %>" data-product-id="<%= product._id %>">Update</button>
+                                        <a href="" class="btn delete-btn" data-index="<%= index %>" data-product-id="<%= product._id %>"><i class="bi bi-trash"></i></a>
+                                    </td>
+                                </tr>
+                             
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+
+
+
+
+
+
+<style>
+    h3, button, table{
+        font-family: "Inter", sans-serif;
+    }
+    thead tr{
+        height: 50px;
+    }
+    td{
+        vertical-align: middle !important;
+    }
+    .bi-trash{
+        font-size: 22px;
+        color: #000;
+    }
+    .popup-message {
+        width: max-content;
+        position: absolute;
+        top:60px;
+        right: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        z-index: 1000;
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        border-radius: 5px;
+        padding: 15px 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        color: #fff;
+    }
+
+    .popup-message.show {
+        opacity: 1;
+        /* transform: translateY(0); */
+    }
+
+    .popup-success {
+        background: linear-gradient(75.7deg, rgb(34, 126, 34) 3.8%, rgb(99, 162, 17) 87.1%);
+        color: #fff;
+    }
+
+    .popup-error {
+        background-color: #f44336; /* Red */
+        border-left: 5px solid #d32f2f;
+    }
+
+</style>
+
+
+
+
+<!-- data table link -->
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    jQuery.noConflict();
+    jQuery(document).ready(function($) {
+        $('#usersTable').DataTable();
+    });
+</script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const updateButtons = document.querySelectorAll('.update-btn');
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const popupMessage = document.getElementById('popup-message');
+
+        function showMessage(message, isSuccess) {
+            popupMessage.innerText = message;
+            popupMessage.classList.add(isSuccess ? 'popup-success' : 'popup-error');
+            popupMessage.classList.add('show');
+            setTimeout(() => {
+                popupMessage.classList.remove('show');
+                setTimeout(() => {
+                    popupMessage.classList.remove(isSuccess ? 'popup-success' : 'popup-error');
+                }, 500); // Wait for the animation to finish
+            }, 2000);
+        }
+
+        updateButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const index = this.getAttribute('data-index');
+                const discountInput = document.querySelector(`.discount-input[data-index="${index}"]`);
+                const productId = this.getAttribute('data-product-id');
+                const startDateInput = document.querySelector(`.start-date-input[data-index="${index}"]`);
+                const endDateInput = document.querySelector(`.end-date-input[data-index="${index}"]`);
+                
+                const discountValue = parseInt(discountInput.value);
+                const startDateValue = startDateInput.value;
+                const endDateValue = endDateInput.value;
+
+                if (discountValue === '' || startDateValue === '' || endDateValue === '') {
+                    showMessage('Fields value cannot be empty', false);
+                    return;
+                } else if (discountValue > 100) {
+                    showMessage('Discount value cannot be greater than 100%', false);
+                    return;
+                } else if (discountValue < 1) {
+                    showMessage('Discount value cannot be less than 1%', false);
+                    return;
+                }
+
+                const data = {
+                    discount: discountValue,
+                    startDate: startDateValue,
+                    endDate: endDateValue,
+                    productId: productId
+                }
+
+                fetch('/admin/create-offer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, true);
+                        // setTimeout(() => {
+                        //     window.location.reload();
+                        // }, 3000);
+                    } else {
+                        showMessage(data.message, false);
+                    }
+                })
+                .catch(error => {
+                    showMessage('Error updating offer', false);
+                    console.error('Error:', error);
+                });
+            });
+        });
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                
+                fetch(`/admin/delete-offer/${productId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage('Offer deleted successfully', true);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
+                        showMessage(data.message || 'Error deleting offer', false);
+                    }
+                })
+                .catch(error => {
+                    showMessage('Error deleting offer', false);
+                    console.error('Error:', error);
+                });
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%-include('./adminPartials/footer')%>

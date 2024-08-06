@@ -1,0 +1,235 @@
+<%-include('./adminPartials/sidebar')%> 
+        
+
+
+
+        <div class="container my-5" style="width: 78%;">
+            <div>
+                <h3 class="mb-5 fw-bold">Category list</h3>
+
+                <!-- Add a div for the pop-up message -->
+                <div id="popup-message" class="popup-message"></div>
+
+                <div>
+                        <a href="/admin/addcategory" class=""><button class="btn btn-primary mb-2">Add new <i class="fa-solid fa-plus"></i></button></a>
+                    <div class="table-responsive rounded-3">
+                        <table id="usersTable" class="table table-striped table-bordered">
+                            <thead>
+                                <tr class="bg-dark text-white">
+                                    <th>No</th>
+                                    <th>images</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+        
+                            <tbody>
+                                <% categoryData.forEach(data => { %>
+                                    
+                                    <tr>
+                                        <td><%= ++i %></td>
+                                        <td><img width="60px" height="60px" class="img-fluid" src="/categoryImages/<%=data.image%>" alt="categoryImage"></td>
+                                        <td><%=data.name%></td>
+                                        <% if (data.status == true) { %>
+                                            <td>
+                                                <form action="/admin/blockcategory/<%= data._id %>" method="post">
+                                                    <button class="btn btn-success">Block</button>
+                                                </form>
+                                            </td>
+                                            
+                                            <% } else { %>
+                                                
+                                               <td>
+                                                <form action="/admin/unblockcategory/<%= data._id %>" method="post">
+                                                    <button class="btn btn-danger">Unblock</button>
+                                                </form>
+                                               </td>
+                                         
+                                        <% } %>
+                                        <td><a href="/admin/editCategory/<%= data.id %>"><button type="button  edit-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fa-regular fa-pen-to-square"></i></button></a></td>
+                                        
+                                    <td>
+                                        <button class="btn btn-danger delete-btn" data-id="<%= data._id %>">Delete</button>
+                                      </td>
+                                    </tr>
+                                 
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+<style>
+    h3, button, table{
+        font-family: "Inter", sans-serif;
+    }
+    .edit-btn{
+        background: none;
+        border: none;
+    }
+    .edit-btn i{
+        font-size: 20px;
+    }
+    thead tr{
+        height: 50px;
+    }
+    td{
+        vertical-align: middle;
+    }
+</style>
+
+
+
+
+<!-- data table link -->
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    jQuery.noConflict();
+    jQuery(document).ready(function($) {
+        $('#usersTable').DataTable();
+    });
+</script>
+
+
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Your existing script -->
+<script>
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const categoryId = event.target.dataset.id;
+
+            if (confirm('Are you sure you want to delete this category?')) {
+                try {
+                    const response = await fetch(`/admin/deletecategory/${categoryId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Success alert using SweetAlert2
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Category deleted successfully',
+                        }).then(() => {
+                            // Optionally reload the page or update the category list
+                            window.location.reload();
+                        });
+                    } else {
+                        // Error alert using SweetAlert2
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: `Error deleting category: ${data.message}`,
+                        });
+                    }
+                } catch (error) {
+                    // Error alert for fetch error using SweetAlert2
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Fetch error. Unable to delete category.',
+                    });
+
+                    console.error('Fetch error:', error);
+                }
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+<style>
+
+    /* Add CSS for pop-up message */
+    .popup-message {
+        display: none;
+        position: fixed;
+        top: -50px; /* Start from a negative value */
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 20px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        opacity: 0; /* Set initial opacity to 0 */
+        transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Add transition effect to top and opacity */
+    }
+</style>
+
+<script>
+    function showPopupMessage(message) {
+        var popupMessage = document.getElementById("popup-message");
+        popupMessage.innerText = message;
+        popupMessage.style.display = "block";
+
+        // Set a timeout to change top and opacity after the element is displayed
+        setTimeout(function() {
+            popupMessage.style.top = "10%"; // Move to 15% from the top
+            popupMessage.style.opacity = "1"; // Fade in
+        }, 10); // Use a small delay to allow the display property to take effect
+
+        setTimeout(function() {
+            popupMessage.style.top = "-50px"; // Move back to the top (negative value)
+            popupMessage.style.opacity = "0"; // Fade out
+            setTimeout(function() {
+                popupMessage.style.display = "none";
+            }, 500); // Delay hiding after fade out
+        }, 3000); // Keep the message visible for 3 seconds
+    }
+
+
+    // Check for success or error query parameter and show the pop-up accordingly
+    document.addEventListener("DOMContentLoaded", function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var successMessage = urlParams.get('success');
+        var errorMessage = urlParams.get('error');
+
+        if (successMessage) {
+            showPopupMessage(successMessage);
+        } else if (errorMessage) {
+            showPopupMessage(errorMessage);
+        }
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+        <%-include('./adminPartials/footer')%>
