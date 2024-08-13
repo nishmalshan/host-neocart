@@ -148,7 +148,7 @@
                             <% User.address.forEach(data => { %>
                                 <div class="col-lg-4 mb-3">
                                     <!-- Address radio -->
-                                    <div class="form-check h-100 border rounded-3 shadow position-relative">
+                                    <div class="form-check h-100 border rounded-3 shadow position-relative text-truncate">
 
                                      <div class="" style="margin-bottom: 6px; position: absolute; top: 13px; right: 13px;">
     
@@ -170,7 +170,7 @@
                                             </small><br>
                                             <div class="address-container">
                                             <small class="text-muted address-text" >
-                                       <span style=" color: black;"> <strong> Address: </strong> <small><%= data.address %></small></span>    
+                                       <span class="text-truncate" style=" color: black;"> <strong> Address: </strong> <small><%= data.address %></small></span>    
                                             </small><br>
                                         </div>
                                             <small class="text-muted" >

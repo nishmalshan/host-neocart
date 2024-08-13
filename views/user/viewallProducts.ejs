@@ -168,7 +168,7 @@
     let priceOrder = selectedPriceOrder ? selectedPriceOrder.value : null;
 
     fetch('/filter-products', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         },

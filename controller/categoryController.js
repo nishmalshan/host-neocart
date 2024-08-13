@@ -44,9 +44,7 @@ const addCategoryPost = async (req, res) => {
         const { categoryName } = req.body;
         const image = req.file ? req.file.filename : null;
 
-    const lowerCaseName = categoryName.toLowerCase()
-
-    const existCategory = await category.findOne({ name: lowerCaseName });
+    const existCategory = await category.findOne({ name: categoryName.toLowerCase() });
     
 
     
