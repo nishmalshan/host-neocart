@@ -59,13 +59,13 @@
                                   <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                                     <!-- Quantity -->
                                     <div class="d-flex mb-4" style="max-width: 300px">
-                                      <button id="plusBtn" class="btn btn-primary px-3 me-2" onclick="updateQuantity('<%= data._id %>', '<%= data.product._id %>', 1, 'decrease')">
+                                      <button id="plusBtn" class="btn btn-primary px-3 me-2" onclick="updateQuantity('<%= data._id %>', '<%= data.product._id %>', 1, 'decrease', '<%= i %>')">
                                           <i class="fas fa-minus"></i>
                                       </button>
                                       <div class="form-outline">
-                                          <input id="form1" min="0" name="quantity" value="<%= data.quantity %>" type="number" class="form-control" />
+                                          <input id="product-quantity-<%= i %>" readonly min="0" name="quantity" value="<%= data.quantity %>" type="number" class="form-control text-center" />
                                       </div>
-                                      <button id="minusBtn" class="btn btn-primary px-3 ms-2" onclick="updateQuantity('<%= data._id %>', '<%= data.product._id %>', 1, 'increase')">
+                                      <button id="minusBtn" class="btn btn-primary px-3 ms-2" onclick="updateQuantity('<%= data._id %>', '<%= data.product._id %>', 1, 'increase', '<%= i %>')">
                                           <i class="fas fa-plus"></i>
                                       </button>
                                   </div>
@@ -73,7 +73,7 @@
 
                                     <!-- Price -->
                                     <p class="text-start text-md-center">
-                                        <strong>MRP: <%= eachProductPrice[i].total %><span>&#8377</span></strong>
+                                        <strong  id="eachProductPrice-<%= i %>">MRP: <%= eachProductPrice[i].total %><span>&#8377</span></strong>
                                     </p>
                                     <!-- Price -->
                                 </div>
@@ -118,8 +118,8 @@
                       <ul class="list-group list-group-flush">
                         <li
                           class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                          Total price :
-                          <span> <%= total.toLocaleString('en-US') %><span>&#8377</span></span>
+                          Subtotal :
+                          <span id="subtotal"> <%= total.toLocaleString('en-US') %><span>&#8377</span></span>
                         </li>
                         <!-- <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                           Discount :
@@ -127,8 +127,8 @@
                         </li> -->
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                           GST :
-                          <!-- <span> %= taxAmount %><span>&#8377</span></span> -->
-                          <span> 18%</span>
+                          <span> <%= taxAmount %><span>&#8377</span></span>
+                          <!-- <span> 18%</span> -->
                         </li>
                         <li
                           class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
@@ -138,7 +138,7 @@
                               <p class="mb-0">(including GST)</p>
                             </strong>
                           </div>
-                          <span><strong> <%= grandTotal.toLocaleString('en-US') %><span>&#8377</span></strong></span>
+                          <span id="grandTotal"><strong> <%= grandTotal.toLocaleString('en-US') %><span>&#8377</span></strong></span>
                         </li>
                       </ul>
           
@@ -197,7 +197,7 @@
 
 <script>
 
-   function updateQuantity(userId, productId, quantity, action) {
+   function updateQuantity(userId, productId, quantity, action, index) {
     try {
       fetch('/change-quantity', {
         method: 'POST',
@@ -208,7 +208,18 @@
       }).then(response => response.json())
       .then(data => {
     if (data.success) {
+      console.log(data,'data');
+      if (data.quantity < 1) {
+        
         window.location.reload();
+      }
+      // Update the quantity input field for the specific product
+      document.getElementById(`product-quantity-${index}`).value = data.quantity;
+
+// Update the price for the specific product
+document.getElementById(`eachProductPrice-${index}`).textContent = `MRP: ${data.eachProductPrice[index].total}₹`;
+      document.getElementById('subtotal').textContent = `${data.total}₹`;
+      document.getElementById('grandTotal').textContent = `${data.grandTotal}₹`;
     } else {
 
       document.getElementById('errorMessage').innerText = data.error;

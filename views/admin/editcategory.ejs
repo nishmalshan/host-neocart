@@ -8,6 +8,11 @@
             <div class="category-edit w-50 rounded shadow p-3 mb-5 bg-body rounded border border-dark-subtle">
                 <div class="p-4">
                     <h3 class="mb-5 fw-bold">Edit Category</h3>
+                    <% if (error && error.length > 0) { %>
+                      <div class="alert alert-danger">
+                        <%= error %>
+                      </div>
+                    <% } %>
                     <form action="/admin/editcategory/<%= categoryData.id %>" enctype="multipart/form-data" method="post">
                         <div class="p-2">
                           <label class="fw-bold mb-2" for="">Category name</label> <br>

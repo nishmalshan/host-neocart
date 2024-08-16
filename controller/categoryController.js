@@ -26,7 +26,7 @@ const categoryPageGet = async (req, res) => {
 const addCategoryPageGet = (req, res) => {
   try {
     const message = req.flash('success')
-    res.render("./admin/addcategory", { message, title: "addcategory" });
+    res.render("./admin/addcategory", { message, title: "addcategory", error: req.flash('error') });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
@@ -49,8 +49,8 @@ const addCategoryPost = async (req, res) => {
 
     
         if (existCategory) {
-            req.flash("success", "Category with the same name already exists");
-            res.redirect("/admin/addcategory");
+            req.flash("error", "Category with the same name already exists");
+            return res.redirect("/admin/addcategory");
         } else {
             if (image !== null) {
                 const newCategory = await category.create({
@@ -83,7 +83,7 @@ const editCategory = async (req,res) => {
 
     const categoryData = await category.findOne({ _id: id })
 
-    res.render('./admin/editcategory',{categoryData, title: 'editCategory'})
+    res.render('./admin/editcategory',{categoryData, title: 'editCategory', error: req.flash('error')})
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
@@ -100,22 +100,31 @@ const editCategoryPost = async (req,res) =>{
     
     const id = req.params.id;
 
-  const name = req.body.categoryName;
+  const { categoryName } = req.body.categoryName;
   // const lowerCaseName = name.toLowerCase();
 
   const newImage = req.file?req.file.filename:undefined;
+
+  const existCategory = await category.findOne({ name: categoryName.toLowerCase() });
+
+  if (existCategory) {
+    req.flash("error", "Category with the same name already exists");
+    return res.redirect("/admin/editCategory");
+  } else {
+    
+    const updatedCategory = await category.findByIdAndUpdate(id, {
+      $set: {
+        name: categoryName.toLowerCase(),
+        image: newImage,
+      },
+    });
   
-  const updatedCategory = await category.findByIdAndUpdate(id, {
-    $set: {
-      name: name.toLowerCase(),
-      image: newImage,
-    },
-  });
-
-
-if (updatedCategory) {
-  res.redirect('/admin/category');
-}
+  
+  if (updatedCategory) {
+    res.redirect('/admin/category');
+  }
+  }
+  
 
   } catch (error) {
     console.error(error);

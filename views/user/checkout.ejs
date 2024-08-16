@@ -315,9 +315,10 @@
                                       <input type="text" class="form-control border" id="couponCode" placeholder="Coupon code" />
                                       <button type="button" class="btn btn-success text-white" id="applyCoupon">Apply</button>
                                     </div>
-                                    <p class="text-success d-inline" style="font-size: 13px;" id="couponMessage"></p>
+                                    <p class="d-inline" style="font-size: 13px;" id="couponMessage"></p>
                                     <a href="#" class="text-primary float-end d-none" id="removeCoupon" style="font-size: 13px;">Remove</a>
                                   </div>
+                                  <a style="color: #007bff; text-decoration: underline; font-size: 12px;" href="/coupons">View coupons</a>
                                 </div>
                               </div>
                               
@@ -576,7 +577,7 @@ console.log(options,'options');
     
                 // Check if the coupon code is empty
                 if (!couponCode) {
-                    couponMessage.text('Please enter a coupon code.');
+                    couponMessage.css('color', 'red').text('Please enter a coupon code.');
                     return;
                 }
     

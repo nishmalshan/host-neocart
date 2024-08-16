@@ -892,7 +892,7 @@ const getWallet = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    User.wallet.transaction.sort((a, b) => b.amount - a.amount);
+    User.wallet.transaction.sort((a, b) => b.timestamp - a.timestamp);
     
     const cartCount = await helpers.getCartCount(req.session.email);
     res.render('./user/wallet', {title: "user-wallet", User, cartCount})

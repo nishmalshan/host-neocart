@@ -166,7 +166,7 @@ user.post('/download-invoice',userAuthentication.verifyingUser, orderController.
 // ---------------------------- route for searche products & filter products ------------------------------
 
 user.get('/products/search',userController.searchProducts)
-user.get('/filter-products',userAuthentication.verifyingUser,userController.filterProducts)
+user.get('/filter-products',userController.filterProducts)
 
 
 

@@ -153,6 +153,7 @@ const deleteCartItem = async (req, res) => {
 const changeQuantity = async (req, res) => {
     try {
         const { userId, productId, quantity, action } = req.body;
+console.log(req.body,'req.body');
 
 
         // Find the cart corresponding to the user
@@ -184,6 +185,7 @@ const changeQuantity = async (req, res) => {
                 return res.status(400).json({ success: false, error: 'Maximum stock reached' });
             }
             productInCart.quantity = updatedQuantity;
+            
         } else if (action === 'decrease') {
             // Update quantity and remove product if quantity becomes zero or negative
             productInCart.quantity -= quantity;
@@ -195,8 +197,14 @@ const changeQuantity = async (req, res) => {
         // Save the updated cart
         await cartData.save();
 
+        const eachProductPrice = await helpers.eachProductPrice(req.session.userId);
+        const total = await helpers.totalAmount(req.session.userId);
+        const taxAmount = Math.round(((total * 18) / 100));
+        const grandTotal = total + taxAmount;
+        console.log(eachProductPrice,'eachProductPrice');
+        
         // Send success response
-        res.status(200).json({ success: true, message: 'Quantity updated successfully' });
+        res.status(200).json({ success: true, message: 'Quantity updated successfully',quantity: productInCart.quantity, eachProductPrice, total, grandTotal });
 
     } catch (error) {
         console.error(error);
