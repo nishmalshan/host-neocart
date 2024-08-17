@@ -951,7 +951,7 @@ const searchProducts = async (req, res) => {
 // post method for filter products
 
 const filterProducts = async (req, res) => {
-  const { priceOrder, category, brand, page = 1, limit = 8 } = req.body;
+  const { priceOrder, category, brand, page = 1, limit = 8 } = req.query;
 
   try {
     let query = {};

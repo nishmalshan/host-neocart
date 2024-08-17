@@ -204,7 +204,7 @@ console.log(req.body,'req.body');
         console.log(eachProductPrice,'eachProductPrice');
         
         // Send success response
-        res.status(200).json({ success: true, message: 'Quantity updated successfully',quantity: productInCart.quantity, eachProductPrice, total, grandTotal });
+        res.status(200).json({ success: true, message: 'Quantity updated successfully',quantity: productInCart.quantity, eachProductPrice, total, taxAmount, grandTotal });
 
     } catch (error) {
         console.error(error);
