@@ -345,7 +345,7 @@ const orderList = async (req, res) => {
       const orderDetails = await orders.find({ userId }).sort({ orderDate: -1 });
       let i = 0;
       const cartCount = await helpers.getCartCount(req.session.email);
-      res.render("./user/orderedList", { title: "order-List", User, orderDetails, cartCount, i });
+      res.render("./user/orderedlist", { title: "order-List", User, orderDetails, cartCount, i });
     }
   } catch (error) {
     console.error(error);
