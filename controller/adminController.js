@@ -7,9 +7,10 @@ const product = require("../model/productSchema");
 const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
-const pdf = require('html-pdf');
+// const pdf = require('html-pdf');
+const PDFDocument = require('pdfkit');
 const ejs = require('ejs');
-
+// const puppeteer = require('puppeteer');
 const credential = {
   email: process.env.ADMIN_EMAIL,
   password: process.env.ADMIN_PASSWORD,
@@ -118,12 +119,10 @@ const salesReport = async (req, res) => {
     console.log('Generating sales report...');
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
-
-    // Parse and format dates using moment.js
+    
     const formattedStartDate = moment(startDate).format('YYYY-MM-DD');
     const formattedEndDate = moment(endDate).format('YYYY-MM-DD');
-
-    // Fetch orders
+    
     const ordersData = await orders.find({
       orderDate: {
         $gte: formattedStartDate,
@@ -132,36 +131,108 @@ const salesReport = async (req, res) => {
       status: 'Delivered',
     }).populate('items.productId');
 
-    // Construct the absolute path to the EJS template
-    const templatePath = path.join(__dirname, '../views/admin/salesreport.ejs');
+    const doc = new PDFDocument({ margin: 50, size: 'A4' });
 
-    // Read the EJS template content
-    const templateContent = fs.readFileSync(templatePath, "utf-8");
-    const renderHTML = ejs.render(templateContent, {
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-      orders: ordersData,
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=sales_report_${startDate}_to_${endDate}.pdf`);
+
+    doc.pipe(res);
+
+    doc.fontSize(18).text('Sales Report', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12).text(`Date Range: ${formattedStartDate} to ${formattedEndDate}`, { align: 'center' });
+    doc.moveDown();
+
+    const tableTop = 150;
+    const tableLeft = 50;
+    const tableRight = 550;
+    const tableBottom = tableTop - 5 + (ordersData.length * 40) + 30;
+
+    // Draw table border
+    doc.rect(tableLeft, tableTop, tableRight - tableLeft, tableBottom - tableTop).stroke();
+
+    // Adjusted column widths
+    const colWidths = [30, 70, 100, 70, 120, 50, 60]; // Increased width of Total column
+    let xPosition = tableLeft;
+
+    doc.font('Helvetica-Bold').fontSize(10);
+
+    // Draw header cells and center-align text
+    ['S.No', 'Orders ID', 'Customer', 'Orders Date', 'Product', 'Quantity', 'Total'].forEach((header, i) => {
+      doc.rect(xPosition, tableTop, colWidths[i], 25).stroke();
+      doc.text(header, xPosition, tableTop + 7, {
+        width: colWidths[i],
+        align: 'center'
+      });
+      xPosition += colWidths[i];
     });
-    console.log('HTML rendered for PDF');
 
-    // Generate PDF using html-pdf
-    const options = { format: 'Letter' };
-    pdf.create(renderHTML, options).toBuffer((err, buffer) => {
-      if (err) {
-        console.error('Error generating PDF:', err);
-        return res.status(500).send("Internal Server Error");
-      }
+    let yPosition = tableTop + 25;
+    doc.font('Helvetica').fontSize(9);
+    
+    let totalOrdersPrice = 0;
+    
+    ordersData.forEach((order, index) => {
+      xPosition = tableLeft;
+      
+      // Draw row cells
+      colWidths.forEach(width => {
+        doc.rect(xPosition, yPosition, width, 40).stroke();
+        xPosition += width;
+      });
 
-      console.log('PDF generated');
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename=sales_report_${startDate}_to_${endDate}.pdf`);
-      res.send(buffer);
+      xPosition = tableLeft;
+      
+      // Fill row data
+      doc.text((index + 1).toString(), xPosition, yPosition + 15, { width: colWidths[0], align: 'center' });
+      xPosition += colWidths[0];
+      
+      doc.text(order._id.toString().slice(-12), xPosition, yPosition + 15, { width: colWidths[1], align: 'center' });
+      xPosition += colWidths[1];
+      
+      doc.text(order.address[0].name, xPosition + 5, yPosition + 5, { 
+        width: colWidths[2] - 10, 
+        height: 30, 
+        align: 'left'
+      });
+      xPosition += colWidths[2];
+      
+      doc.text(moment(order.orderDate).format('YYYY-MM-DD'), xPosition, yPosition + 15, { width: colWidths[3], align: 'center' });
+      xPosition += colWidths[3];
+      
+      let productText = order.items.map(item => item.productId.name).join(', ');
+      doc.text(productText, xPosition + 5, yPosition + 5, { 
+        width: colWidths[4] - 10, 
+        height: 30, 
+        align: 'left'
+      });
+      xPosition += colWidths[4];
+      
+      let quantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
+      doc.text(quantity.toString(), xPosition, yPosition + 15, { width: colWidths[5], align: 'center' });
+      xPosition += colWidths[5];
+      
+      // Added more right space for Total column
+      doc.text(`₹${order.totalPrice.toFixed(2)}/-`, xPosition + 5, yPosition + 15, { 
+        width: colWidths[6] - 15, 
+        align: 'right'
+      });
+      
+      totalOrdersPrice += order.totalPrice;
+      yPosition += 40;
     });
+
+    doc.font('Helvetica-Bold').fontSize(10);
+    doc.text(`Total Orders Price: ₹${totalOrdersPrice.toFixed(2)}/-`, tableRight - 200, tableBottom + 10, { width: 200, align: 'right' });
+
+    doc.end();
+
   } catch (error) {
     console.error('Error generating sales report:', error);
     res.status(500).send("Internal Server Error");
   }
-}
+};
+
 
 
 // list the users who signed Up
