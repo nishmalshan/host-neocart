@@ -8,6 +8,8 @@ passport.use(new GoogleStrategy({
   passReqToCallback: true
 },
 function(req, accessToken, refreshToken, profile, done) {
+  console.log('.......................',profile);
+  
   // Your logic to find or create a user
   return done(null, profile);
 }));
