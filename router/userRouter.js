@@ -35,7 +35,7 @@ const upload = multer({ storage: storage }); // Create a Multer instance
 // user.get('/auth/failure', userController.failureGoogleLogin);
 
 
-user.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+user.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
 user.get('/auth/google/callback', 
   passport.authenticate('google', {
