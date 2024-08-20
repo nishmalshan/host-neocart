@@ -9,6 +9,8 @@ const couponController = require('../controller/couponController');
 const profileUpload = require("../middleware/profile-multer");
 const passport = require('passport');
 require('../middleware/passport');
+user.use(passport.initialize());
+user.use(passport.session())
 
 const multer = require("multer");
 
