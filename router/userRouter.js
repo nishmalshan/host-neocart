@@ -9,8 +9,6 @@ const couponController = require('../controller/couponController');
 const profileUpload = require("../middleware/profile-multer");
 const passport = require('passport');
 require('../middleware/passport');
-user.use(passport.initialize());
-user.use(passport.session())
 
 const multer = require("multer");
 
@@ -35,9 +33,9 @@ const upload = multer({ storage: storage }); // Create a Multer instance
 // user.get('/auth/failure', userController.failureGoogleLogin);
 
 
-app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+user.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
-app.get('/auth/google/callback', 
+user.get('/auth/google/callback', 
   passport.authenticate('google', {
     successRedirect: '/auth/success',
     failureRedirect: '/auth/failure'
