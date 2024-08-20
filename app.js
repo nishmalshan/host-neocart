@@ -9,6 +9,7 @@ const flash = require("connect-flash"); // Fixed typo here
 const router = require("./router/userRouter");
 const adminRouter = require("./router/adminRouter");
 const connectDB = require("./config/connection");
+const passport = require('./middleware/passport');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -28,6 +29,9 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Use nocache middleware
 app.use(nocache());

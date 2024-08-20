@@ -8,8 +8,11 @@ passport.use(new GoogleStrategy({
   passReqToCallback: true
 },
 function(req, accessToken, refreshToken, profile, done) {
-  console.log('.......................',profile);
-  
+  console.log('Profile:', profile);
+  if (!profile) {
+    console.error('Profile is undefined');
+    return done(new Error('Failed to retrieve profile'));
+  }
   // Your logic to find or create a user
   return done(null, profile);
 }));

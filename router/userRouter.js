@@ -21,19 +21,28 @@ const upload = multer({ storage: storage }); // Create a Multer instance
 
 // ----------------------- route for google authentication -------------------------------------
 
-user.get('/google', passport.authenticate('google',{ scope:
-  [ 'email', 'profile' ]
-}));
+// user.get('/google', passport.authenticate('google',{ scope:
+//   [ 'email', 'profile' ]
+// }));
 
-user.get('/google/callback', 
-  passport.authenticate( 'google', {
-  successRedirect: '/auth/success',
-  failureRedirect: '/auth/failure'
-}))
+// user.get('/google/callback', 
+//   passport.authenticate( 'google', {
+//   successRedirect: '/auth/success',
+//   failureRedirect: '/auth/failure'
+// }))
 
-user.get('/auth/success', userController.successGoogleLogin);
-user.get('/auth/failure', userController.failureGoogleLogin);
+// user.get('/auth/success', userController.successGoogleLogin);
+// user.get('/auth/failure', userController.failureGoogleLogin);
 
+
+app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', {
+    successRedirect: '/auth/success',
+    failureRedirect: '/auth/failure'
+  })
+);
 
 
 // ----------------------------- route for signup & login -----------------------------------------
