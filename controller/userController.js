@@ -50,6 +50,8 @@ const toSignUpPageGet = (req, res) => {
 // Google authentication functions
 
 const successGoogleLogin = async (req, res) => {
+  console.log('...............................check eda check.............................',req.user);
+  
   try {
 
     if (!req.user) {

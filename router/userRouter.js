@@ -31,7 +31,7 @@ const upload = multer({ storage: storage }); // Create a Multer instance
 //   failureRedirect: '/auth/failure'
 // }))
 
-// user.get('/auth/success', userController.successGoogleLogin);
+user.get('/auth/success', userController.successGoogleLogin);
 // user.get('/auth/failure', userController.failureGoogleLogin);
 
 
