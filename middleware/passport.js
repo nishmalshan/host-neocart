@@ -8,7 +8,7 @@ passport.use(new GoogleStrategy({
   passReqToCallback: true
 },
 function(req, accessToken, refreshToken, profile, done) {
-  console.log('Profile:', profile);
+  console.log('Profile............:', profile);
   if (!profile) {
     console.error('Profile is undefined');
     return done(new Error('Failed to retrieve profile'));
