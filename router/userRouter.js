@@ -21,11 +21,11 @@ const upload = multer({ storage: storage }); // Create a Multer instance
 
 // ----------------------- route for google authentication -------------------------------------
 
-user.get('/auth/google', passport.authenticate('google',{ scope:
+user.get('/google', passport.authenticate('google',{ scope:
   [ 'email', 'profile' ]
 }));
 
-user.get('/auth/google/callback', 
+user.get('/google/callback', 
   passport.authenticate( 'google', {
   successRedirect: '/auth/success',
   failureRedirect: '/auth/failure'
