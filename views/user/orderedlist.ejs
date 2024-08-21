@@ -169,8 +169,6 @@
         <p id="returnOrderReasonErrorMessage" class="mb-3 text-center" style="font-size: 13px; color: red;"></p>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="clearReturnReason('<%= data._id %>')">Close</button>
-              <button type="button" class="btn btn-success" onclick="submitReturnReason('<%= data._id %>', '<%= data.items[0]._id %>')">Submit</button>
-              <button type="button" class="btn btn-success" onclick="submitReturnReason('<%= data._id %>', '<%= data.items && data.items.length > 0 ? data.items[0]._id : '' %>')">Submit</button>
 
             </div>
       </div>
