@@ -78,7 +78,7 @@
             <h3 class="mb-3 fw-bold">Coupon Management</h3>
             <div>
                 <div class="table-responsive rounded-3">
-                    <p id="couponWarning" style="color: red; font-size: 15px; text-align: center;"></p>
+                    <p id="editCouponWarning" style="color: red; font-size: 15px; text-align: center; position: absolute; left: 50%;"></p>
                     <div class="add-btn mb-3">
                         <button class="btn btn-success rounded-pill" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add New <i class="bi bi-plus-lg"></i></button>
                     </div>
@@ -119,7 +119,7 @@
                                     
                                     <td>
                                         <div class="text-center d-flex justify-content-evenly align-items-center"  style="width: 7rem;">
-                                            <button type="button" class="btn btn-primary text-center edit-btn" data-index="<%= index %>" data-coupon-id="<%= data._id %>">Edit</button>
+                                            <button type="button" class="btn btn-primary text-center edit-btn" id="editCouponBtn" data-index="<%= index %>" data-coupon-id="<%= data._id %>">Edit</button>
                                         <a href="" class="btn delete-btn" data-index="<%= index %>" data-coupon-id="<%= data._id %>"><i class="bi bi-trash"></i></a>
                                         </div>
                                     </td>
@@ -230,21 +230,45 @@
             console.log('endDate',endDate);
             
 
+            const today = new Date().setHours(0, 0, 0, 0); // Get today's date without time
+
+            const leadingSpaceRegex = /^\s/;
+
+            const minAmount = parseFloat(minPurchaseAmount); // Ensure it's treated as a number
+            const maxAmount = parseFloat(maxPurchaseAmount); // Ensure it's treated as a number
+
             if (!couponName) {
                 warningMessage = 'Coupon Name is required.<br>';
+            } else if (leadingSpaceRegex.test(couponName)) {
+                warningMessage += 'Coupon Name cannot start with a space.<br>';
             } else if (!couponCode) {
                 warningMessage += 'Coupon Code is required.<br>';
+            } else if (leadingSpaceRegex.test(couponCode)) {
+                warningMessage += 'Coupon Code cannot start with a space.<br>';
             } else if (!minPurchaseAmount) {
                 warningMessage += 'Minimum Purchase Amount is required.<br>';
+            } else if (minAmount < 0) {
+                warningMessage += 'Minimum Purchase Amount cannot be negative.<br>';
             } else if (!maxPurchaseAmount) {
                 warningMessage += 'Maximum Purchase Amount is required.<br>';
+            } else if (maxAmount < minAmount) {
+                warningMessage += 'Maximum Purchase Amount cannot be less than Minimum Purchase Amount.<br>';
             } else if (!discountAmount) {
                 warningMessage += 'Discount Amount is required.<br>';
+            } else if (discountAmount < 1 || discountAmount > 100) {
+                warningMessage += 'Discount Amount must be between 1 and 100.<br>';
             } else if (!startDate) {
                 warningMessage += 'Start Date is required.<br>';
+            } else if (new Date(startDate).setHours(0, 0, 0, 0) < today) {
+                warningMessage += 'Start Date cannot be a past date.<br>';
             } else if (!endDate) {
                 warningMessage += 'End Date is required.<br>';
+            } else if (new Date(startDate).setHours(0, 0, 0, 0) > new Date(endDate).setHours(0, 0, 0, 0)) {
+                warningMessage += 'Start Date cannot be greater than End Date.<br>';
+            } else if (new Date(endDate).setHours(0, 0, 0, 0) < new Date(startDate).setHours(0, 0, 0, 0)) {
+                warningMessage += 'End Date cannot be less than Start Date.<br>';
             }
+
              if (warningMessage) {
                 $('#couponWarning').html(warningMessage);
                 return;
@@ -368,7 +392,7 @@
 
 <script>
     $(document).ready(function() {
-        $('.edit-btn').on('click', function() {
+        $('#editCouponBtn').on('click', function() {
             var index = $(this).data('index');
             var couponId = $(this).data('coupon-id');
 
@@ -382,8 +406,49 @@
             var expiryDate = $('input.expiryDate-input[data-index="' + index + '"]').val();
 
             // Check if any input is undefined and log an error if so
-            if (couponName === undefined || couponCode === undefined || minPurchaseAmount === undefined || maxPurchaseAmount === undefined || discountAmount === undefined || startDate === undefined || expiryDate === undefined) {
-                console.error('One or more inputs are undefined.');
+            const today = new Date().setHours(0, 0, 0, 0); // Get today's date without time
+
+            const leadingSpaceRegex = /^\s/;
+
+            const minAmount = parseFloat(minPurchaseAmount); // Ensure it's treated as a number
+            const maxAmount = parseFloat(maxPurchaseAmount); // Ensure it's treated as a number
+
+            if (!couponName) {
+                console.log('no coupon');
+                
+                warningMessage = 'Coupon Name is required.<br>';
+            } else if (leadingSpaceRegex.test(couponName)) {
+                warningMessage += 'Coupon Name cannot start with a space.<br>';
+            } else if (!couponCode) {
+                warningMessage += 'Coupon Code is required.<br>';
+            } else if (leadingSpaceRegex.test(couponCode)) {
+                warningMessage += 'Coupon Code cannot start with a space.<br>';
+            } else if (!minPurchaseAmount) {
+                warningMessage += 'Minimum Purchase Amount is required.<br>';
+            } else if (minAmount < 0) {
+                warningMessage += 'Minimum Purchase Amount cannot be negative.<br>';
+            } else if (!maxPurchaseAmount) {
+                warningMessage += 'Maximum Purchase Amount is required.<br>';
+            } else if (maxAmount < minAmount) {
+                warningMessage += 'Maximum Purchase Amount cannot be less than Minimum Purchase Amount.<br>';
+            } else if (!discountAmount) {
+                warningMessage += 'Discount Amount is required.<br>';
+            } else if (discountAmount < 1 || discountAmount > 100) {
+                warningMessage += 'Discount Amount must be between 1 and 100.<br>';
+            } else if (!startDate) {
+                warningMessage += 'Start Date is required.<br>';
+            } else if (new Date(startDate).setHours(0, 0, 0, 0) < today) {
+                warningMessage += 'Start Date cannot be a past date.<br>';
+            } else if (!endDate) {
+                warningMessage += 'End Date is required.<br>';
+            } else if (new Date(startDate).setHours(0, 0, 0, 0) > new Date(endDate).setHours(0, 0, 0, 0)) {
+                warningMessage += 'Start Date cannot be greater than End Date.<br>';
+            } else if (new Date(endDate).setHours(0, 0, 0, 0) < new Date(startDate).setHours(0, 0, 0, 0)) {
+                warningMessage += 'End Date cannot be less than Start Date.<br>';
+            }
+
+             if (warningMessage) {
+                $('#editCouponWarning').html(warningMessage);
                 return;
             }
 
