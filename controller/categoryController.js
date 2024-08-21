@@ -94,44 +94,38 @@ const editCategory = async (req,res) => {
 
 // post method for admin edit category
 
-const editCategoryPost = async (req,res) =>{
-
+const editCategoryPost = async (req, res) => {
   try {
-    
     const id = req.params.id;
+    const { categoryName } = req.body; // Correctly destructuring categoryName from req.body
 
-  const { categoryName } = req.body.categoryName;
-  // const lowerCaseName = name.toLowerCase();
+    const newImage = req.file ? req.file.filename : undefined;
 
-  const newImage = req.file?req.file.filename:undefined;
+    const existCategory = await category.findOne({ name: categoryName.toLowerCase() });
 
-  const existCategory = await category.findOne({ name: categoryName.toLowerCase() });
+    if (existCategory) {
+      
+      req.flash("error", "Category with the same name already exists");
+      return res.redirect(`/admin/editCategory/${id}`);
+    } else {
+      
+      const updatedCategory = await category.findByIdAndUpdate(id, {
+        $set: {
+          name: categoryName.toLowerCase(),
+          image: newImage,
+        },
+      });
 
-  if (existCategory) {
-    req.flash("error", "Category with the same name already exists");
-    return res.redirect("/admin/editCategory");
-  } else {
-    
-    const updatedCategory = await category.findByIdAndUpdate(id, {
-      $set: {
-        name: categoryName.toLowerCase(),
-        image: newImage,
-      },
-    });
-  
-  
-  if (updatedCategory) {
-    res.redirect('/admin/category');
-  }
-  }
-  
-
+      if (updatedCategory) {
+        res.redirect('/admin/category');
+      }
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
+};
 
-}
 
 
 
