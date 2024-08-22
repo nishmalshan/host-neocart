@@ -145,6 +145,7 @@
                                 </button>
                             </div>
                         </div>
+                        <p id="warningMessage" style="color: red; font-size: 13px; text-align: center;"></p>
                     </div>
                 </div>
             </div>
@@ -344,6 +345,7 @@
         // function for downloading sales report
 
         function downloadSalesReport() {
+            var warningMessage = document.getElementById('warningMessage').innerHTML = '';
             console.log('1111111111111111111111111111');
             var startDate = document.getElementById('startDate').value;
             var endDate = document.getElementById('endDate').value;
@@ -351,6 +353,22 @@
             console.log(endDate,'endDate');
             if (startDate === '' || endDate === "") {
                 alert("Please select both start and end dates");
+                return;
+            }
+            const today = new Date().setHours(0, 0, 0, 0);
+            
+            if (!startDate) {
+                warningMessage += 'Start Date is required.<br>';
+            } else if (!endDate) {
+                warningMessage += 'End Date is required.<br>';
+            } else if (new Date(startDate).setHours(0, 0, 0, 0) > new Date(endDate).setHours(0, 0, 0, 0)) {
+                warningMessage += 'Start Date cannot be greater than End Date.<br>';
+            } else if (new Date(endDate).setHours(0, 0, 0, 0) < new Date(startDate).setHours(0, 0, 0, 0)) {
+                warningMessage += 'End Date cannot be less than Start Date.<br>';
+            }
+
+            if (warningMessage) {
+                warningMessage.innerHTML = warningMessage;
                 return;
             }
 
