@@ -1,5 +1,3 @@
-const dbConnection = require("../config/connection");
-const session = require("express-session");
 const user = require("../model/user");
 const orders = require("../model/orderSchema");
 const dashboard = require("../controller/dashboard")
@@ -7,10 +5,8 @@ const product = require("../model/productSchema");
 const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
-// const pdf = require('html-pdf');
 const PDFDocument = require('pdfkit');
-const ejs = require('ejs');
-// const puppeteer = require('puppeteer');
+const ExcelJS = require('exceljs');
 const credential = {
   email: process.env.ADMIN_EMAIL,
   password: process.env.ADMIN_PASSWORD,
@@ -119,10 +115,11 @@ const salesReport = async (req, res) => {
     console.log('Generating sales report...');
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
-    
+    const format = req.query.format;
+
     const formattedStartDate = moment(startDate).format('YYYY-MM-DD');
     const formattedEndDate = moment(endDate).format('YYYY-MM-DD');
-    
+
     const ordersData = await orders.find({
       orderDate: {
         $gte: formattedStartDate,
@@ -131,107 +128,191 @@ const salesReport = async (req, res) => {
       status: 'Delivered',
     }).populate('items.productId');
 
-    const doc = new PDFDocument({ margin: 50, size: 'A4' });
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=sales_report_${startDate}_to_${endDate}.pdf`);
-
-    doc.pipe(res);
-
-    doc.fontSize(18).text('Sales Report', { align: 'center' });
-    doc.moveDown();
-    doc.fontSize(12).text(`Date Range: ${formattedStartDate} to ${formattedEndDate}`, { align: 'center' });
-    doc.moveDown();
-
-    const tableTop = 150;
-    const tableLeft = 50;
-    const tableRight = 550;
-    const tableBottom = tableTop - 5 + (ordersData.length * 40) + 30;
-
-    // Draw table border
-    doc.rect(tableLeft, tableTop, tableRight - tableLeft, tableBottom - tableTop).stroke();
-
-    // Adjusted column widths
-    const colWidths = [30, 70, 100, 70, 120, 50, 60]; // Increased width of Total column
-    let xPosition = tableLeft;
-
-    doc.font('Helvetica-Bold').fontSize(10);
-
-    // Draw header cells and center-align text
-    ['S.No', 'Orders ID', 'Customer', 'Orders Date', 'Product', 'Quantity', 'Total'].forEach((header, i) => {
-      doc.rect(xPosition, tableTop, colWidths[i], 25).stroke();
-      doc.text(header, xPosition, tableTop + 7, {
-        width: colWidths[i],
-        align: 'center'
-      });
-      xPosition += colWidths[i];
-    });
-
-    let yPosition = tableTop + 25;
-    doc.font('Helvetica').fontSize(9);
-    
-    let totalOrdersPrice = 0;
-    
-    ordersData.forEach((order, index) => {
-      xPosition = tableLeft;
-      
-      // Draw row cells
-      colWidths.forEach(width => {
-        doc.rect(xPosition, yPosition, width, 40).stroke();
-        xPosition += width;
-      });
-
-      xPosition = tableLeft;
-      
-      // Fill row data
-      doc.text((index + 1).toString(), xPosition, yPosition + 15, { width: colWidths[0], align: 'center' });
-      xPosition += colWidths[0];
-      
-      doc.text(order._id.toString().slice(-12), xPosition, yPosition + 15, { width: colWidths[1], align: 'center' });
-      xPosition += colWidths[1];
-      
-      doc.text(order.address[0].name, xPosition + 5, yPosition + 5, { 
-        width: colWidths[2] - 10, 
-        height: 30, 
-        align: 'left'
-      });
-      xPosition += colWidths[2];
-      
-      doc.text(moment(order.orderDate).format('YYYY-MM-DD'), xPosition, yPosition + 15, { width: colWidths[3], align: 'center' });
-      xPosition += colWidths[3];
-      
-      let productText = order.items.map(item => item.productId.name).join(', ');
-      doc.text(productText, xPosition + 5, yPosition + 5, { 
-        width: colWidths[4] - 10, 
-        height: 30, 
-        align: 'left'
-      });
-      xPosition += colWidths[4];
-      
-      let quantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
-      doc.text(quantity.toString(), xPosition, yPosition + 15, { width: colWidths[5], align: 'center' });
-      xPosition += colWidths[5];
-      
-      // Added more right space for Total column
-      doc.text(`₹${order.totalPrice.toFixed(2)}/-`, xPosition + 5, yPosition + 15, { 
-        width: colWidths[6] - 15, 
-        align: 'right'
-      });
-      
-      totalOrdersPrice += order.totalPrice;
-      yPosition += 40;
-    });
-
-    doc.font('Helvetica-Bold').fontSize(10);
-    doc.text(`Total Orders Price: ₹${totalOrdersPrice.toFixed(2)}/-`, tableRight - 200, tableBottom + 10, { width: 200, align: 'right' });
-
-    doc.end();
+    if (format === 'pdf') {
+      await generatePDFReport(res, ordersData, formattedStartDate, formattedEndDate);
+    } else if (format === 'excel') {
+      await generateExcelReport(res, ordersData, formattedStartDate, formattedEndDate);
+    } else {
+      res.status(400).send('Invalid format specified');
+    }
 
   } catch (error) {
     console.error('Error generating sales report:', error);
     res.status(500).send("Internal Server Error");
   }
 };
+
+async function generatePDFReport(res, ordersData, startDate, endDate) {
+  const doc = new PDFDocument({ margin: 50, size: 'A4' });
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `attachment; filename=sales_report_${startDate}_to_${endDate}.pdf`);
+
+  doc.pipe(res);
+
+  doc.fontSize(18).text('Sales Report', { align: 'center' });
+  doc.moveDown();
+  doc.fontSize(12).text(`Date Range: ${startDate} to ${endDate}`, { align: 'center' });
+  doc.moveDown();
+
+  const tableTop = 150;
+  const tableLeft = 50;
+  const tableRight = 550;
+  const rowHeight = 30;
+  const tableBottom = tableTop + (ordersData.length + 1) * rowHeight;
+
+  doc.rect(tableLeft, tableTop, tableRight - tableLeft, tableBottom - tableTop).stroke();
+
+  const colWidths = [30, 70, 100, 70, 120, 50, 60];
+  let xPosition = tableLeft;
+
+  doc.font('Helvetica-Bold').fontSize(10);
+
+  ['S.No', 'Order ID', 'Customer', 'Order Date', 'Product', 'Quantity', 'Total'].forEach((header, i) => {
+    doc.rect(xPosition, tableTop, colWidths[i], rowHeight).stroke();
+    doc.text(header, xPosition, tableTop + 10, {
+      width: colWidths[i],
+      align: 'center'
+    });
+    xPosition += colWidths[i];
+  });
+
+  let yPosition = tableTop + rowHeight;
+  doc.font('Helvetica').fontSize(9);
+
+  let totalOrdersPrice = 0;
+
+  ordersData.forEach((order, index) => {
+    xPosition = tableLeft;
+
+    colWidths.forEach(width => {
+      doc.rect(xPosition, yPosition, width, rowHeight).stroke();
+      xPosition += width;
+    });
+
+    xPosition = tableLeft;
+
+    doc.text((index + 1).toString(), xPosition, yPosition + 10, { width: colWidths[0], align: 'center' });
+    xPosition += colWidths[0];
+
+    doc.text(order._id.toString().slice(-12), xPosition, yPosition + 10, { width: colWidths[1], align: 'center' });
+    xPosition += colWidths[1];
+
+    doc.text(order.address[0].name, xPosition + 5, yPosition + 5, { 
+      width: colWidths[2] - 10, 
+      height: rowHeight - 10, 
+      align: 'left'
+    });
+    xPosition += colWidths[2];
+
+    doc.text(moment(order.orderDate).format('YYYY-MM-DD'), xPosition, yPosition + 10, { width: colWidths[3], align: 'center' });
+    xPosition += colWidths[3];
+
+    let productText = order.items.map(item => item.productId.name).join(', ');
+    doc.text(productText, xPosition + 5, yPosition + 5, { 
+      width: colWidths[4] - 10, 
+      height: rowHeight - 10, 
+      align: 'left'
+    });
+    xPosition += colWidths[4];
+
+    let quantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
+    doc.text(quantity.toString(), xPosition, yPosition + 10, { width: colWidths[5], align: 'center' });
+    xPosition += colWidths[5];
+
+    doc.text(`₹${order.totalPrice.toFixed(2)}/-`, xPosition + 5, yPosition + 10, { 
+      width: colWidths[6] - 15, 
+      align: 'right'
+    });
+
+    totalOrdersPrice += order.totalPrice;
+    yPosition += rowHeight;
+  });
+
+  doc.font('Helvetica-Bold').fontSize(10);
+  doc.text(`Total Orders Price: ₹${totalOrdersPrice.toFixed(2)}/-`, tableRight - 200, tableBottom + 10, { width: 200, align: 'right' });
+
+  doc.end();
+}
+
+async function generateExcelReport(res, ordersData, startDate, endDate) {
+  try {
+    console.log('Starting Excel report generation...');
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sales Report');
+
+    // Define columns
+    worksheet.columns = [
+      { header: 'S.No', key: 'sno', width: 5 },
+      { header: 'Order ID', key: 'orderId', width: 15 },
+      { header: 'Customer', key: 'customer', width: 20 },
+      { header: 'Order Date', key: 'orderDate', width: 15 },
+      { header: 'Product', key: 'product', width: 30 },
+      { header: 'Quantity', key: 'quantity', width: 10 },
+      { header: 'Total', key: 'total', width: 15 },
+    ];
+
+    // Style the header row
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+
+    let totalOrdersPrice = 0;
+
+    // Add data rows
+    ordersData.forEach((order, index) => {
+      worksheet.addRow({
+        sno: index + 1,
+        orderId: order._id.toString().slice(-12),
+        customer: order.address[0].name,
+        orderDate: moment(order.orderDate).format('YYYY-MM-DD'),
+        product: order.items.map(item => item.productId.name).join(', '),
+        quantity: order.items.reduce((sum, item) => sum + item.quantity, 0),
+        total: order.totalPrice,
+      });
+
+      totalOrdersPrice += order.totalPrice;
+    });
+
+    // Add total row
+    worksheet.addRow({});
+    const totalRow = worksheet.addRow({
+      product: 'Total Orders Price:',
+      total: totalOrdersPrice,
+    });
+    totalRow.font = { bold: true };
+
+    // Set number format for the 'Total' column
+    worksheet.getColumn('total').numFmt = '₹#,##0.00';
+
+    console.log('Excel worksheet created. Attempting to write to buffer...');
+
+    // Write to buffer
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    console.log('Excel file written to buffer. Setting response headers...');
+
+    // Set response headers
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=sales_report_${startDate}_to_${endDate}.xlsx`);
+
+    console.log('Sending Excel file...');
+
+    // Send the buffer
+    res.send(buffer);
+
+    console.log('Excel file sent successfully.');
+
+    // For debugging: Save a copy of the file locally
+    const debugPath = path.join(__dirname, `debug_report_${Date.now()}.xlsx`);
+    fs.writeFileSync(debugPath, buffer);
+    console.log('Debug Excel file saved:', debugPath);
+
+  } catch (error) {
+    console.error('Error generating Excel report:', error);
+    res.status(500).send('Error generating Excel report');
+  }
+}
 
 
 
