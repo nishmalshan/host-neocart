@@ -371,6 +371,8 @@
                 warningMessage.innerHTML += 'Start Date cannot be greater than End Date.<br>';
             } else if (new Date(endDate).setHours(0, 0, 0, 0) < new Date(startDate).setHours(0, 0, 0, 0)) {
                 warningMessage.innerHTML += 'End Date cannot be less than Start Date.<br>';
+            } else if (new Date(endDate).setHours(0, 0, 0, 0) > today) {
+                rningMessage.innerHTML += 'End Date cannot be a future date.<br>';
             }
 
             if (warningMessage.innerHTML) {

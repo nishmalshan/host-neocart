@@ -116,17 +116,25 @@ const salesReport = async (req, res) => {
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
     const format = req.query.format;
+console.log(startDate,'startDate');
+console.log(endDate,'endDate');
 
     const formattedStartDate = moment(startDate).format('YYYY-MM-DD');
     const formattedEndDate = moment(endDate).format('YYYY-MM-DD');
+console.log(formattedStartDate,'formattedStartDate');
+console.log(formattedEndDate,'formattedEndDate');
 
-    const ordersData = await orders.find({
-      orderDate: {
-        $gte: formattedStartDate,
-        $lte: formattedEndDate,
-      },
-      status: 'Delivered',
-    }).populate('items.productId');
+const endDateWithTime = new Date(endDate);
+endDateWithTime.setHours(23, 59, 59, 999);
+
+const ordersData = await orders.find({
+  orderDate: {
+    $gte: startDate,
+    $lte: endDateWithTime,
+  },
+  status: 'Delivered',
+}).populate('items.productId');
+console.log(ordersData,'OOOOOOOOOOOOOOOOOOOOOOOOO');
 
     if (format === 'pdf') {
       await generatePDFReport(res, ordersData, formattedStartDate, formattedEndDate);
@@ -143,6 +151,9 @@ const salesReport = async (req, res) => {
 };
 
 async function generatePDFReport(res, ordersData, startDate, endDate) {
+  console.log(startDate,'startDate');
+  console.log(endDate,'endDate');
+  
   const doc = new PDFDocument({ margin: 50, size: 'A4' });
 
   res.setHeader('Content-Type', 'application/pdf');
