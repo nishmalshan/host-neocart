@@ -405,18 +405,17 @@
             var startDate = $('input.startDate-input[data-index="' + index + '"]').val();
             var expiryDate = $('input.expiryDate-input[data-index="' + index + '"]').val();
 
+            // Initialize warningMessage as an empty string
+            var warningMessage = '';
+
             // Check if any input is undefined and log an error if so
             const today = new Date().setHours(0, 0, 0, 0); // Get today's date without time
-
             const leadingSpaceRegex = /^\s/;
-
             const minAmount = parseFloat(minPurchaseAmount); // Ensure it's treated as a number
             const maxAmount = parseFloat(maxPurchaseAmount); // Ensure it's treated as a number
 
             if (!couponName) {
-                console.log('no coupon');
-                
-                warningMessage = 'Coupon Name is required.<br>';
+                warningMessage += 'Coupon Name is required.<br>';
             } else if (leadingSpaceRegex.test(couponName)) {
                 warningMessage += 'Coupon Name cannot start with a space.<br>';
             } else if (!couponCode) {
@@ -439,15 +438,15 @@
                 warningMessage += 'Start Date is required.<br>';
             } else if (new Date(startDate).setHours(0, 0, 0, 0) < today) {
                 warningMessage += 'Start Date cannot be a past date.<br>';
-            } else if (!endDate) {
+            } else if (!expiryDate) {
                 warningMessage += 'End Date is required.<br>';
-            } else if (new Date(startDate).setHours(0, 0, 0, 0) > new Date(endDate).setHours(0, 0, 0, 0)) {
+            } else if (new Date(startDate).setHours(0, 0, 0, 0) > new Date(expiryDate).setHours(0, 0, 0, 0)) {
                 warningMessage += 'Start Date cannot be greater than End Date.<br>';
-            } else if (new Date(endDate).setHours(0, 0, 0, 0) < new Date(startDate).setHours(0, 0, 0, 0)) {
+            } else if (new Date(expiryDate).setHours(0, 0, 0, 0) < new Date(startDate).setHours(0, 0, 0, 0)) {
                 warningMessage += 'End Date cannot be less than Start Date.<br>';
             }
 
-             if (warningMessage) {
+            if (warningMessage) {
                 $('#editCouponWarning').html(warningMessage);
                 return;
             }
@@ -520,6 +519,7 @@
         });
     });
 </script>
+
 
 
 
