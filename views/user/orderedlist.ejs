@@ -158,20 +158,24 @@
 <!-- Modal for Return Order -->
 <div class="modal fade" id="returnOrderModal<%= data._id %>" tabindex="-1" aria-labelledby="returnOrderModalLabel<%= data._id %>" aria-hidden="true">
   <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="returnOrderModalLabel<%= data._id %>">Return Order</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <textarea name="returnReason" id="returnReason<%= data._id %>" class="w-100 rounded-2 ps-2 form-control" rows="5" placeholder="Enter your reason..."></textarea>
-        </div>
-        <p id="returnOrderReasonErrorMessage" class="mb-3 text-center" style="font-size: 13px; color: red;"></p>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="clearReturnReason('<%= data._id %>')">Close</button>
-
-            </div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="returnOrderModalLabel<%= data._id %>">Return Order</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <div class="modal-body">
+        <textarea name="returnReason" id="returnReason<%= data._id %>" class="w-100 rounded-2 ps-2 form-control" rows="5" placeholder="Enter your reason..."></textarea>
+      </div>
+      <p id="returnOrderReasonErrorMessage" class="mb-3 text-center" style="font-size: 13px; color: red;"></p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="clearReturnReason('<%= data._id %>')">Close</button>
+        <% if (data.items && data.items.length > 0) { %>
+          <button type="button" class="btn btn-primary" onclick="submitReturnReason('<%= data._id %>', '<%= data.items[0]._id %>')">Submit</button>
+        <% } else { %>
+          <button type="button" class="btn btn-primary" disabled>Submit</button>
+        <% } %>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -290,56 +294,54 @@ function submitCancellationReason(orderId) {
 
 
 <script>
-
-
-function submitReturnReason(orderId, itemId) {
+  function submitReturnReason(orderId, itemId) {
     let reason = $('#returnReason' + orderId).val().trim();
     const returnOrderReasonErrorMessage = $('#returnOrderReasonErrorMessage');
-    
+  console.log(itemId,'itemId');
+  
     if (reason === '') {
-        returnOrderReasonErrorMessage.text('Reason cannot be empty');
-        return;
+      returnOrderReasonErrorMessage.text('Reason cannot be empty');
+      return;
     }
-    
+  
     returnOrderReasonErrorMessage.text('');
-
+  
     // Send an AJAX request to the server
     $.ajax({
-        url: '/returnOrder', // Your server-side endpoint for handling returns
-        method: 'PATCH',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            orderId: orderId,
-            itemId: itemId,
-            reason: reason
-        }),
-        success: function(response) {
-            if (response.success) {
-                Swal.fire({
-                    title: 'Success',
-                    text: 'Order return request sent successfully!',
-                    icon: 'success'
-                }).then(() => {
-                    location.reload(); // Refresh the page to reflect changes
-                });
-                $('#returnOrderModal' + orderId).modal('hide');
-            } else {
-                returnOrderReasonErrorMessage.text(response.message);
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Error:', textStatus, errorThrown);
-            returnOrderReasonErrorMessage.text('An error occurred while submitting the return request. Please try again.');
+      url: '/returnOrder', // Your server-side endpoint for handling returns
+      method: 'PATCH',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        orderId: orderId,
+        itemId: itemId,
+        reason: reason,
+      }),
+      success: function (response) {
+        if (response.success) {
+          Swal.fire({
+            title: 'Success',
+            text: 'Order return request sent successfully!',
+            icon: 'success',
+          }).then(() => {
+            location.reload(); // Refresh the page to reflect changes
+          });
+          $('#returnOrderModal' + orderId).modal('hide');
+        } else {
+          returnOrderReasonErrorMessage.text(response.message);
         }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error('Error:', textStatus, errorThrown);
+        returnOrderReasonErrorMessage.text('An error occurred while submitting the return request. Please try again.');
+      },
     });
-}
-
-function clearReturnReason(orderId) {
+  }
+  
+  function clearReturnReason(orderId) {
     $('#returnReason' + orderId).val('');
     $('#returnOrderReasonErrorMessage').text('');
-}
-
-</script>
+  }
+  </script>
 
 
 
